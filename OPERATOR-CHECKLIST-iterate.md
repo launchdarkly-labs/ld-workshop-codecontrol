@@ -7,7 +7,8 @@ Per-challenge verification items for **Track 3 / Iterate** (`instruqt-iterate/`)
 ## Cross-cutting items
 
 - [ ] **Live-fire end-to-end smoke test** against a fresh sandbox: bootstrap → materialize the baseline → click through every challenge → solve every challenge → confirm every check passes. Time each challenge.
-- [ ] **Track-level `setup-workstation` timing** — bootstrap, mint token, apply the decided baseline solves. Escalate to pre-baking if past ~60s.
+- [x] **Track-level `setup-workstation` timing** — measured 41 s and 195 s in two live plays (2026-10-20); the slow run stalled between the 05 and 07 replays with no error. Watch the `[setup +Ns]` lines; pre-baking only if slow runs become common.
+- [ ] **Re-bake the image** before the next play: `terraform/lib/exp.sh` gained three API fixes (maintainerId, 400-duplicate handling, canReshuffleTraffic for bandits) that live in the image, not the track.
 - [ ] **Confirm the baseline** a cold learner lands in: four flags, Otto on, the carousel on **Bestsellers**, the personalized bug **fixed** (click the Rollout Tote on Personalized: carousel stays), traffic on the `exp` profile, and NO `recs-engagement` metric yet (the learner creates it in 02).
 - [ ] **Confirm Experimentation is enabled** on the workshop account (assumed from the AgentControl workshop; not verified in Phase 0).
 - [ ] **VM image re-bake** picks up the `instruqt-iterate/` directory and the app changes (`/recommendations/click`, rec-click reporting in `app.js`).

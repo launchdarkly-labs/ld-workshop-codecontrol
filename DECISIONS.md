@@ -314,3 +314,16 @@ Played end to end on Instruqt right after the Release play (Check-first-then-Ski
 - **The guarded-rollout solve fell back again** (release-pipelines beta POST → HTTP 404), same as Release 08; the shared helper's warning path worked. Same pending decision.
 - **07's solve behaved as decided** (healed end-state, loud warning) and its Check failure message read correctly.
 - All Observability fail-messages rendered as plain text after the de-markdown pass.
+
+---
+
+## First full plays of the Iterate track (2026-10-20)
+
+Two plays (the second after patching `terraform/lib/exp.sh` on the VM, since `lib/` is baked into the image rather than shipped with the track).
+
+- **Setup: 41 s** on the first play; **195 s** on the second, with a ~2.5-minute stall between the 05 and 07 Release solve replays that the log doesn't explain (no errors; Terraform and the LD API simply took longer). Treat the budget as "usually ~45 s, occasionally minutes": the `[setup +Ns]` lines make the slow step visible when it happens.
+- **Three API facts the experiments helper now encodes:** `POST /experiments` requires `maintainerId` (a service token has no member identity — the helper now uses the sandbox's student member, falling back to the first account member); a duplicate experiment key is HTTP **400 `duplicate_experiment_key`**, not 409, which matters because the Iterate solves chain 07 → 06 → 04 → 03 and must be re-runnable; and a multi-armed bandit requires **`canReshuffleTraffic: true`** (400 "Reshuffle traffic must be true for a MAB").
+- **With the first two fixes, the chain works:** 03's solve created the experiment, 04's Check correctly reported "exists but hasn't been started", 04's solve started the iteration, 06's solve stopped it with Personalized as the winner and pointed the default rule at Personalized. Every Iterate fail-message read correctly.
+- **The bandit solve failed on the reshuffle rule** (fixed in the helper; verified in a third play — see below if recorded, otherwise pending the next image bake).
+- **The 06 check** said "still running" when no experiment existed at all; it now names the missing experiment first.
+- `terraform/lib/` changes need an **image re-bake** to reach learners; the operator checklist notes this.

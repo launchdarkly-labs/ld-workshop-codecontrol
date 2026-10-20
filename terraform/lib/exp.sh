@@ -65,6 +65,8 @@ case "$cmd" in
     VER=$(echo "$FJ" | jq -r ".environments.$ENV.version // ._version")
     MAINT=$(maintainer_id "$PROJ")
     [ -n "$MAINT" ] || { echo "ERROR: could not resolve a maintainerId (members API returned nothing)" >&2; exit 1; }
+    # canReshuffleTraffic: false keeps A/B assignments sticky; a MAB REQUIRES true
+    # (first live play: 400 "Reshuffle traffic must be true for a MAB").
     BODY=$(jq -n --arg key "$KEY" --arg name "$NAME" --arg hypo "$HYPO" --arg metric "$METRIC" --arg maint "$MAINT" \
       --arg best "$BEST_ID" --arg pers "$PERS_ID" --argjson ver "$VER" --arg type "$TYPE" --arg flag "$FLAG" '
       {
@@ -83,7 +85,7 @@ case "$cmd" in
           flags: { ($flag): {ruleId: "fallthrough", flagConfigVersion: $ver, notInExperimentVariationId: $best} }
         }
       }
-      | if $type == "mab" then .iteration.reallocationFrequencyMillis = 60000 else . end')
+      | if $type == "mab" then .iteration.reallocationFrequencyMillis = 60000 | .iteration.canReshuffleTraffic = true else . end')
     STATUS=$(curl -sS -o /tmp/exp-create.json -w '%{http_code}' -X POST \
       "$API/projects/$PROJ/environments/$ENV/experiments" "${AUTHH[@]}" "${JSONH[@]}" --data-raw "$BODY")
     # LaunchDarkly reports an existing key as 400 duplicate_experiment_key (not
