@@ -11,7 +11,7 @@ virtualmachines:
   # Single shared image for all three CodeControl tracks. Baked by the
   # operator from vm-image/image.sh and registered with Instruqt under this
   # name (see vm-image/README.md).
-  image: launchdarkly/workshop-codecontrol
+  image: launchdarkly/workshop-codecontrol-1
   shell: /bin/bash
   machine_type: n1-standard-1
 # REQUIRED: all four secrets. Terraform in /opt/ld/ld-workshop-participant uses
