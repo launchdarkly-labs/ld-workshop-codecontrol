@@ -1,0 +1,20 @@
+# code-server on :8080 — the "Code Editor" service tab. Runs as root with
+# no auth, opening the app directory as the workspace, so lab instructions
+# can run `service` and `terraform` from its terminal without sudo. The
+# Instruqt sandbox is the security boundary.
+[Unit]
+Description=code-server (Code Editor tab)
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=root
+Environment=HOME=/root
+ExecStart=/usr/bin/code-server --bind-addr 0.0.0.0:8080 --auth none --disable-telemetry /opt/ld/codecontrol/app
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

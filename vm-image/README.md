@@ -8,11 +8,43 @@ repo (see "Things Claude Code does not own" in `CLAUDE.md`).
 **Image name:** `launchdarkly/workshop-codecontrol` — must match the
 `virtualmachines.image` value in every track's `config.yml`.
 
-**Status:** this README is the Phase 1 contract for what the image must
-contain. `build-image.sh` (the scripted bake) is delivered in a later phase,
-after the app exists (Phase 2). Sizing note: `machine_type: n1-standard-1`
-is declared in `config.yml` — the app is a single FastAPI process with no
-LLM, so this should suffice; confirm during the first bake.
+**Contents of this directory:**
+
+| File | Purpose |
+|---|---|
+| `build-image.sh` | The scripted bake: paste into a fresh Ubuntu 24.04 VM as root. Installs tools, places the source at `/opt/ld/codecontrol`, builds the venv, pre-inits Terraform, installs the units, enables services. |
+| `systemd/togglewear.service` | The storefront on :3000 (enabled at boot). |
+| `systemd/togglewear-traffic.service` | Synthetic shopper traffic (installed, disabled; labs start it). |
+| `systemd/code-server.service` | The Code Editor tab on :8080 (enabled at boot). |
+| `verify-image.sh` | Post-bake checks; run before saving the image. |
+
+Sizing note: `machine_type: n1-standard-1` is declared in `config.yml` — the
+app is a single FastAPI process with no LLM, so this should suffice; confirm
+during the first bake (the observability plugin adds OpenTelemetry threads
+but little CPU).
+
+## How to build
+
+1. **Start a fresh Ubuntu 24.04 (noble) base VM** in the Instruqt console
+   and open its terminal as root (`sudo -i`).
+2. **Point the script at the source.** Either edit `REPO_URL` / `REPO_REF`
+   at the top of `build-image.sh` to the commit you want baked, or — while
+   this repo has no remote — `scp` a checkout to the VM and run the script
+   with `SOURCE_DIR=/path/to/checkout` set (it copies only the directories
+   the VM needs and never `.git`).
+3. **Paste the whole script.** It prints a `==>` banner per step and stops
+   on the first failure. Expect several minutes; the venv pulls ~180 MB of
+   OpenTelemetry packages for the observability plugin.
+4. **Run `/opt/ld/codecontrol/vm-image/verify-image.sh`.** Every line must
+   read `OK`; the last line says "save the image."
+5. **Save the VM as an image** named `launchdarkly/workshop-codecontrol`
+   (or a suffixed name, updating every track's `config.yml` to match, so
+   labs in flight keep their current image).
+
+Re-bake whenever `app/requirements.txt`, a unit file, an apt dependency, or
+— because setup scripts don't `git pull` at lab start — any `instruqt-*/`
+script, assignment, paste file, or Terraform module changes. The
+`.remote` files the Instruqt CLI generates on publish are never baked.
 
 ## What the image must contain
 
@@ -20,12 +52,16 @@ LLM, so this should suffice; confirm during the first bake.
 
 - Ubuntu 24.04 (noble). The system `python3` is 3.12, which satisfies
   `launchdarkly-server-sdk` 9.16.0 (requires >= 3.10).
-- CLI tools: `curl`, `jq`, `git`, `unzip`, and Terraform >= 1.5
-  (HashiCorp apt repo).
+- CLI tools: `curl`, `jq`, `git`, `unzip`, `vim`, and Terraform >= 1.5.
+  `build-image.sh` installs Terraform as a direct binary from
+  `releases.hashicorp.com` (pinned in `TERRAFORM_VERSION`; HashiCorp's apt
+  repo lags on noble) and uses a shared `TF_PLUGIN_CACHE_DIR` at
+  `/opt/ld/terraform-plugin-cache` so the provider is downloaded once.
 
 ### Repo contents at `/opt/ld/codecontrol`
 
-Copy these directories from this repository into the image:
+`build-image.sh` places these directories from this repository into the image
+(plus `vm-image/` itself, for `verify-image.sh`):
 
 ```
 /opt/ld/codecontrol/
@@ -113,8 +149,9 @@ Three services are installed; the first two are enabled and running at boot:
    - `Restart=on-failure`
    - Stdlib only; drives the app on `localhost:3000`.
 
-Unit files are delivered alongside `build-image.sh` in a later phase; the
-parameters above are the contract.
+The unit files in `systemd/` implement exactly these parameters;
+`build-image.sh` installs them with `install -m 644` into
+`/etc/systemd/system/` and enables the first two.
 
 ### Instruqt expectations
 
@@ -127,11 +164,11 @@ parameters above are the contract.
 
 ## Handoff checklist
 
-1. Bake the image with the contents above.
-2. Register it with Instruqt as `launchdarkly/workshop-codecontrol`.
-3. Boot a VM and verify: `curl localhost:3000` serves the storefront,
-   code-server answers on 8080, `terraform -version` >= 1.5, and
-   `/opt/ld/venv/bin/python -c "import ldclient, ldobserve"` succeeds.
+1. Bake the image with `build-image.sh` as described above.
+2. Run `verify-image.sh` on the VM (it covers the storefront on :3000,
+   code-server on :8080, Terraform >= 1.5, the venv imports, every module's
+   `.terraform/`, the unit states, and that nothing stateful was baked).
+3. Save/register it with Instruqt as `launchdarkly/workshop-codecontrol`.
 4. Confirm the Release track-level `setup-workstation` completes well under
    60s on a fresh instance (bootstrap apply + key pulls + token mint +
    service start).

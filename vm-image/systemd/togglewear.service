@@ -1,0 +1,26 @@
+# ToggleWear storefront (FastAPI) on :3000 — enabled at boot.
+#
+# --reload matters: learners paste code into server.py during labs and the
+# server must pick it up on save (uvicorn[standard] ships the watchfiles
+# reloader). The reloader does NOT re-read .env, which is why track scripts
+# do `service togglewear stop` then `start` after rewriting it.
+[Unit]
+Description=ToggleWear storefront (FastAPI)
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/ld/codecontrol/app
+EnvironmentFile=/opt/ld/codecontrol/app/.env
+# Observability egress override hook: uncomment if a locked-down network
+# blocks gRPC on 4317 (see vm-image/README.md).
+# Environment=OTEL_EXPORTER_OTLP_ENDPOINT=https://otel.observability.app.launchdarkly.com:443
+ExecStart=/opt/ld/venv/bin/uvicorn server:app --host 0.0.0.0 --port 3000 --reload
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

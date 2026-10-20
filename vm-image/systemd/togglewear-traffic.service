@@ -1,0 +1,22 @@
+# Synthetic shopper traffic — installed but DISABLED at boot. Challenge
+# setup scripts start it (first: Release 07) via terraform/lib/traffic.sh,
+# which writes a profile to /opt/ld/traffic.env and stop/starts this unit.
+# The leading "-" makes the env file optional, so the Release track runs on
+# the generator's built-in defaults when the file is empty.
+[Unit]
+Description=ToggleWear synthetic shopper traffic
+After=togglewear.service
+Wants=togglewear.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/ld/codecontrol/traffic-generator
+EnvironmentFile=-/opt/ld/traffic.env
+ExecStart=/opt/ld/venv/bin/python /opt/ld/codecontrol/traffic-generator/generate_traffic.py
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

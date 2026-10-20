@@ -252,3 +252,12 @@ Operator answers to the open questions in `PHASES-observability.md` §9, recorde
 - **The multi-armed bandit is a hands-on lab.** Bandits are a first-class experiment type with a documented Design flow and stable REST (`type: "mab"`), so 07 is "configure it", not "watch it".
 - **Iterate solves chain backwards (07 → 06 → 04 → 03 → 02).** Each solve runs the previous challenge's solve first, because experiments depend on the metric, a running iteration depends on the experiment, shipping depends on a running iteration, and a bandit can't start while the A/B experiment still runs on the same rule. Every step is idempotent (409/“already running” tolerated).
 - **The `exp` traffic profile** (2 shoppers/s, every shopper browses, uniform products, weighted clicks) is the third profile in `terraform/lib/traffic.sh`; it replaces `recs` for this track since the bug is fixed and error volume is irrelevant.
+
+---
+
+## VM image build inputs (2026-10-19)
+
+- **Paste-into-console script, not Packer.** `vm-image/build-image.sh` follows the AgentControl workshop's proven flow: fresh Ubuntu base in the Instruqt console, paste the script as root, run the verifier, save the image. It accepts `SOURCE_DIR` as an alternative to cloning because this repo has no remote yet.
+- **Unit files are real files under `vm-image/systemd/`,** installed by the script, rather than heredocs inside it — so the contract in `vm-image/README.md`, the units, and the installer can't drift from each other and the units can be reviewed on their own.
+- **Deviations from AgentControl's script, all per this repo's README contract:** one venv at `/opt/ld/venv` (not `app/.venv`) shared by the app and the generators; *every* Terraform module is pre-inited through a shared `TF_PLUGIN_CACHE_DIR` (the later tracks run seven applies at setup); the traffic unit is installed but disabled and reads `/opt/ld/traffic.env`; no Node.js (the browser bundles are vendored, nothing is built on the VM); `--reload` on uvicorn; code-server installed via the official script (`.deb`, `/usr/bin/code-server`) with the app directory as workspace.
+- **Terraform is pinned to the latest stable at authoring time** (looked up from HashiCorp's releases API on 2026-10-19, not from memory) and installed as a direct binary; `>= 1.5` is the only hard requirement.
