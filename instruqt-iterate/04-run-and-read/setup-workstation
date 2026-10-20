@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Runs when the challenge starts. Prepares the solve module and makes sure
+# the experiment traffic profile is running so results accumulate at ~120
+# exposures/minute. Does NOT start the iteration (the learner does).
+#
+set -euo pipefail
+TF=/opt/ld/codecontrol/terraform
+cd "$TF/iterate-04"
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+bash "$TF/lib/traffic.sh" exp
+exit 0

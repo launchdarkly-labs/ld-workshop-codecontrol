@@ -1,0 +1,37 @@
+slug: ld-codecontrol-observability
+id: 2sfs2p3qgw1j
+title: 'LaunchDarkly CodeControl: Observability'
+teaser: Release-scoped observability. See the error, replay the session, guard on the real signal, and let the system heal itself.
+description: |-
+  Otto shipped. Now ToggleWear wants a "Recommended for You" carousel, and
+  the new personalized version is about to start failing in production on
+  certain products. In this track you'll wire LaunchDarkly's observability
+  plugins into the app so errors show up attributed to the flag variation
+  that caused them, replay the exact session where a shopper watched the
+  carousel vanish, read release health per variation, run a guarded release
+  on the real instrumented error signal, and finally set up auto-remediation
+  so a detected regression fixes itself. You'll leave knowing the moment
+  something breaks, and how to make the fix automatic.
+icon: https://launchdarkly.com/favicon-dark-mode.png
+tags:
+- codecontrol
+- observability
+- feature-flags
+owner: launchdarkly
+developers:
+- kcochran@launchdarkly.com
+show_timer: true
+timelimit: 7200
+lab_config:
+  extend_ttl: 3600
+  feedback_recap_enabled: true
+  feedback_tab_enabled: false
+  loadingMessages: true
+  theme:
+    name: modern-dark
+  override_challenge_layout: false
+  hideStopButton: false
+  default_layout: AssignmentRight
+  default_layout_sidebar_size: 25
+enhanced_loading: false
+version: "3"

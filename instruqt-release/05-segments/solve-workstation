@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Materialize the end-state of 05-segments: the Beta Testers segment and
+# the segment-based targeting rule.
+#
+# Self-sufficient: writes tfvars and inits so later tracks can replay solves
+# in order on a fresh VM without running challenge setups first.
+#
+set -euo pipefail
+
+cd /opt/ld/codecontrol/terraform/release-05
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+
+# If the learner already created the segment manually (half-finished, then
+# skipped), adopt it into state so apply reconciles instead of 409ing.
+terraform state show launchdarkly_segment.beta_testers >/dev/null 2>&1 || \
+  terraform import -input=false launchdarkly_segment.beta_testers \
+    "${LD_PROJECT_KEY}/test/beta-testers" || true
+
+terraform apply -auto-approve
+exit 0

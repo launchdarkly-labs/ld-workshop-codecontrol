@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Runs when the challenge starts. This is an exploratory lab: the learner
+# reads what 02's instrumentation is already producing. Setup only makes
+# sure the error signal is still flowing (traffic on the recs profile), and
+# nudges the strategy to personalized in case a learner skipped 02 without
+# solving (idempotent; tolerated if a rollout is active on the rule).
+#
+set -euo pipefail
+
+TF=/opt/ld/codecontrol/terraform
+
+bash "$TF/lib/set-fallthrough.sh" "${LD_PROJECT_KEY}" recommendations-strategy personalized \
+  || echo "WARNING: could not set recommendations-strategy to personalized; continuing" >&2
+systemctl is-active --quiet togglewear-traffic || bash "$TF/lib/traffic.sh" recs
+exit 0

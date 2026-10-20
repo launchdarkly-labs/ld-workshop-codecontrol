@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Materialize the end-state of 06-guarded-release-real-metrics: a guarded
+# (monitored) release of the personalized strategy via the beta release
+# APIs. If the beta call fails, the helper logs loudly and leaves the flag
+# on bestsellers — the post-rollback state (see the helper's header).
+#
+# Self-sufficient: writes tfvars and inits so later tracks can replay it.
+#
+set -euo pipefail
+
+cd /opt/ld/codecontrol/terraform/observability-06
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+terraform apply -auto-approve
+exit 0

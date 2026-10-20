@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Runs when the challenge starts. Prepares the solve module and switches the
+# synthetic shoppers to the recommendations-heavy profile so that, once the
+# learner ships the personalized strategy, the bug produces a steady error
+# signal for this and the following labs. Does NOT apply the solve.
+#
+set -euo pipefail
+
+TF=/opt/ld/codecontrol/terraform
+
+cd "$TF/observability-02"
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+
+bash "$TF/lib/traffic.sh" recs
+exit 0

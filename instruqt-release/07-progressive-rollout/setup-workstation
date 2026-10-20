@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Runs when the challenge starts. Prepares the solve module and starts the
+# synthetic shopper traffic so the rollout has contexts flowing. Does NOT
+# apply the solve (solve-workstation does that if the learner skips).
+#
+set -euo pipefail
+
+cd /opt/ld/codecontrol/terraform/release-07
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+
+service togglewear-traffic start || true
+systemctl is-active --quiet togglewear-traffic || echo "WARNING: togglewear-traffic is not running; the rollout will have no contexts flowing" >&2
+exit 0

@@ -1,0 +1,36 @@
+slug: ld-codecontrol-iterate
+id: kxs293ua1qt3
+title: 'LaunchDarkly CodeControl: Iterate'
+teaser: Stop guessing which version is better. Measure it with experiments, then let a bandit pick the winner.
+description: |-
+  ToggleWear's "Recommended for You" carousel works, and there are two ways
+  to fill it: the safe Bestsellers strategy and the shiny Personalized one.
+  Which is actually better? In this track you'll create an engagement
+  metric and wire its events into the app, design an A/B experiment between
+  the two strategies, run it against live shop traffic, read the results,
+  promote the winner, and then hand the decision to a multi-armed bandit
+  that routes traffic to whichever strategy is winning. You'll leave
+  knowing how to let real data drive product decisions.
+icon: https://launchdarkly.com/favicon-dark-mode.png
+tags:
+- codecontrol
+- iterate
+- experimentation
+owner: launchdarkly
+developers:
+- kcochran@launchdarkly.com
+show_timer: true
+timelimit: 7200
+lab_config:
+  extend_ttl: 3600
+  feedback_recap_enabled: true
+  feedback_tab_enabled: false
+  loadingMessages: true
+  theme:
+    name: modern-dark
+  override_challenge_layout: false
+  hideStopButton: false
+  default_layout: AssignmentRight
+  default_layout_sidebar_size: 25
+enhanced_loading: false
+version: "3"

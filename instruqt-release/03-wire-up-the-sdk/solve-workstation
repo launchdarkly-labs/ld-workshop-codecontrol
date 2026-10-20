@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# Materialize the end-state of 03-wire-up-the-sdk: SDK pastes applied and
+# the release-otto flag turned on.
+#
+# Self-sufficient: writes tfvars and inits so later tracks can replay solves
+# in order on a fresh VM without running challenge setups first.
+#
+set -euo pipefail
+
+APP=/opt/ld/codecontrol/app
+TF=/opt/ld/codecontrol/terraform
+
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly SDK setup" "$TF/release-03/pastes/server-sdk-setup.py"
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly context" "$TF/release-03/pastes/server-context.py"
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly Otto flag" "$TF/release-03/pastes/server-otto-flag.py"
+python3 "$TF/lib/patch_block.py" "$APP/static/app.js" "LaunchDarkly client SDK" "$TF/release-03/pastes/client-sdk.js"
+
+cd "$TF/release-03"
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+terraform apply -auto-approve
+
+# uvicorn --reload picks up server.py on save; give it a moment before any
+# subsequent check hits /healthz.
+sleep 2
+exit 0

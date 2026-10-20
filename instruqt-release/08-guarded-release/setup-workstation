@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+# Runs when the challenge starts. Pre-builds the supporting infrastructure
+# the learner should find ready (per the phase spec): the otto-style flag
+# serving Concise, the otto-response-latency metric, and the app wiring
+# that evaluates the style flag and tracks latency. The learner's own work
+# — the guarded rollout — is NOT done here (solve-workstation does that on
+# skip).
+#
+set -euo pipefail
+
+TF=/opt/ld/codecontrol/terraform
+APP=/opt/ld/codecontrol/app
+
+cd "$TF/release-08"
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+
+# Targeted apply: supporting infra only, never the guarded rollout itself.
+terraform apply -auto-approve \
+  -target=launchdarkly_feature_flag.otto_style \
+  -target=launchdarkly_feature_flag_environment.otto_style_test \
+  -target=launchdarkly_metric.otto_response_latency
+
+# Pre-wire the app: style evaluation + latency tracking.
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly Otto style" "$TF/release-08/pastes/server-otto-style.py"
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly event tracking" "$TF/release-08/pastes/server-tracking.py"
+
+# Make sure 07's ramp is complete so full traffic reaches Otto and both
+# style variations collect latency samples. This is the state the ramp
+# reaches on its own; a fast learner may arrive mid-ramp. Tolerated if the
+# patch conflicts with a still-active rollout.
+curl -fsS -X PATCH \
+  "https://app.launchdarkly.com/api/v2/flags/${LD_PROJECT_KEY}/release-otto" \
+  -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  --data-raw '[
+    {"op": "replace", "path": "/environments/test/on", "value": true},
+    {"op": "replace", "path": "/environments/test/fallthrough", "value": {"variation": 0}}
+  ]' || echo "WARNING: could not force-complete the release-otto ramp (a progressive rollout may still be active); continuing."
+
+# Traffic must be flowing for the guard to have samples (idempotent).
+service togglewear-traffic start || true
+systemctl is-active --quiet togglewear-traffic || echo "WARNING: togglewear-traffic is not running; the guarded rollout will have no samples" >&2
+exit 0

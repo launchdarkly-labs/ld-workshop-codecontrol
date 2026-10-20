@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# Verify the release-otto flag exists, is boolean, and is available to
+# client-side SDKs.
+#
+
+STATUS=$(curl -s -o /tmp/ck-rel02.json -w '%{http_code}' -X GET \
+  'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'/release-otto' \
+  -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
+if [ "$STATUS" != "200" ] && [ "$STATUS" != "404" ]; then
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  exit 1
+fi
+FLAG=$(cat /tmp/ck-rel02.json)
+
+if [ "$(echo "$FLAG" | jq -r .key)" != "release-otto" ]; then
+  fail-message "The **release-otto** flag doesn't exist yet. Create it in the LaunchDarkly tab — the flag key must be exactly \`release-otto\`."
+  exit 1
+fi
+
+if [ "$(echo "$FLAG" | jq -r .kind)" != "boolean" ]; then
+  fail-message "The **release-otto** flag exists but isn't a boolean flag. Delete it and re-create it with two variations: \`true\` and \`false\`."
+  exit 1
+fi
+
+if [ "$(echo "$FLAG" | jq -r .clientSideAvailability.usingEnvironmentId)" != "true" ]; then
+  fail-message "The **release-otto** flag isn't available to client-side SDKs. Open the flag, find the client-side availability setting (in the flag's settings or right sidebar), and enable **SDKs using Client-side ID**."
+  exit 1
+fi
+
+exit 0

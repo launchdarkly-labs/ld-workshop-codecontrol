@@ -1,0 +1,19 @@
+# Terraform runtime artifacts (lock files ARE committed)
+**/.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+
+# App runtime env (only .env.example is committed)
+app/.env
+
+# Instruqt CLI publish artifacts — never authored by hand
+*.remote
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS noise
+.DS_Store

@@ -1,0 +1,40 @@
+#!/bin/bash
+#
+# Verify a progressive rollout is underway (default rule carries a rollout)
+# or has completed (default rule serves true).
+#
+# VERIFY: confirm during the operator click-through that an ACTIVE
+# progressive rollout surfaces as .fallthrough.rollout in the flag JSON;
+# the public schema shows fallthrough as {variation | rollout} with no
+# explicit progressive marker.
+#
+
+STATUS=$(curl -s -o /tmp/ck-rel07.json -w '%{http_code}' -X GET \
+  'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'/release-otto' \
+  -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
+if [ "$STATUS" != "200" ]; then
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  exit 1
+fi
+ENV_JSON=$(jq '.environments.test' /tmp/ck-rel07.json)
+
+if [ "$(echo "$ENV_JSON" | jq -r '.on')" != "true" ]; then
+  fail-message "**release-otto** is toggled off. Turn it on — a rollout can't ramp a flag that's off."
+  exit 1
+fi
+
+HAS_ROLLOUT=$(echo "$ENV_JSON" | jq '.fallthrough | has("rollout")')
+FALL_VAR=$(echo "$ENV_JSON" | jq -r '.fallthrough.variation // "none"')
+
+if [ "$HAS_ROLLOUT" == "true" ]; then
+  # Ramp in progress.
+  exit 0
+fi
+
+if [ "$FALL_VAR" == "0" ]; then
+  # Ramp finished: everyone gets Otto.
+  exit 0
+fi
+
+fail-message "No progressive rollout is running on **release-otto**'s default rule. Open the flag's targeting, edit the default rule's **Serve** menu, choose **Progressive rollout**, and save."
+exit 1

@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# Materialize the end-state of 08-guarded-release: the app wiring (style
+# evaluation + latency tracking), supporting infra, and a guarded
+# (monitored) release of Chatty Otto via the beta release APIs.
+#
+# Self-sufficient: repeats setup's pastes (patch_block is idempotent) and
+# writes tfvars/inits, so later tracks can replay solves in order on a
+# fresh VM without running challenge setups first.
+#
+set -euo pipefail
+
+APP=/opt/ld/codecontrol/app
+TF=/opt/ld/codecontrol/terraform
+
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly Otto style" "$TF/release-08/pastes/server-otto-style.py"
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly event tracking" "$TF/release-08/pastes/server-tracking.py"
+
+cd "$TF/release-08"
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+terraform apply -auto-approve
+exit 0

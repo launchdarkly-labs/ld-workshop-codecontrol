@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# Runs when the challenge starts. Prepares the solve module and makes sure
+# the experiment traffic profile is running (shoppers browsing and clicking
+# recommendations, so the event key shows up in the metric dialog). Does
+# NOT apply the solve.
+#
+set -euo pipefail
+TF=/opt/ld/codecontrol/terraform
+cd "$TF/iterate-02"
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+systemctl is-active --quiet togglewear-traffic || bash "$TF/lib/traffic.sh" exp
+exit 0

@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# Verify a multi-armed bandit (experiment type "mab") on
+# recommendations-strategy has a running iteration.
+#
+STATUS=$(curl -s -o /tmp/ck-itr07.json -w '%{http_code}' -X GET \
+  "https://app.launchdarkly.com/api/v2/projects/$LD_PROJECT_KEY/environments/test/experiments?filter=flagKey:recommendations-strategy&expand=currentIteration" \
+  -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
+if [ "$STATUS" != "200" ]; then
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  exit 1
+fi
+MABS=$(jq '[.items[]? | select(.type == "mab")] | length' /tmp/ck-itr07.json)
+if [ "$MABS" == "0" ]; then
+  fail-message "No multi-armed bandit found on **recommendations-strategy**. From **Multi-armed bandits**, click **Create** → **Multi-armed bandit**, randomize by user, pick **Recs engagement**, the flag's default rule, an update frequency, and save."
+  exit 1
+fi
+RUNNING=$(jq '[.items[]? | select(.type == "mab") | select(.currentIteration.status == "running")] | length' /tmp/ck-itr07.json)
+if [ "$RUNNING" == "0" ]; then
+  fail-message "Your bandit exists but isn't running. Open it, click **Start**, then **Start multi-armed bandit**."
+  exit 1
+fi
+exit 0

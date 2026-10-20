@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# Materialize the end-state of 02-your-first-flag: the release-otto flag.
+#
+# Self-sufficient: writes tfvars and inits so later tracks can replay solves
+# in order on a fresh VM without running challenge setups first.
+#
+set -euo pipefail
+
+cd /opt/ld/codecontrol/terraform/release-02
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+
+# If the learner already created the flag manually (half-finished, then
+# skipped), adopt it into state so apply reconciles instead of 409ing.
+terraform state show launchdarkly_feature_flag.release_otto >/dev/null 2>&1 || \
+  terraform import -input=false launchdarkly_feature_flag.release_otto \
+    "${LD_PROJECT_KEY}/release-otto" || true
+
+terraform apply -auto-approve
+exit 0

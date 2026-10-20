@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+# Verify both observability pastes landed, the running server initialized
+# the plugin, and the personalized strategy is being served (so there is
+# something to observe).
+#
+
+APP_DIR=/opt/ld/codecontrol/app
+
+if ! grep -q 'ObservabilityPlugin(' "$APP_DIR/server.py"; then
+  fail-message "The server isn't instrumented yet. Replace the \`LaunchDarkly SDK setup paste block\` in \`server.py\` with this lab's version, which adds the \`ObservabilityPlugin\` to the SDK config."
+  exit 1
+fi
+
+if ! grep -q 'new SessionReplay.default' "$APP_DIR/static/app.js"; then
+  fail-message "The browser isn't instrumented yet. Replace the \`LaunchDarkly client SDK paste block\` in \`static/app.js\` with this lab's version, which passes the Observability and SessionReplay plugins to \`createClient\`."
+  exit 1
+fi
+
+HEALTH=$(curl -s localhost:3000/healthz)
+if [ "$(echo "$HEALTH" | jq -r .ld_wired)" != "true" ]; then
+  fail-message "The running server isn't wired to LaunchDarkly. Make sure you saved \`server.py\` and that it still contains the SDK setup (\`ldclient.set_config\`). The service reloads on save; check the Code Editor terminal for a Python error if it stays down."
+  exit 1
+fi
+if [ "$(echo "$HEALTH" | jq -r .observability)" != "true" ]; then
+  fail-message "The paste is in \`server.py\` but the observability plugin hasn't initialized. Save the file again and give the reload a few seconds, then re-check. If it keeps failing, look for a traceback in the service log: \`journalctl -u togglewear -n 50\`."
+  exit 1
+fi
+
+STATUS=$(curl -s -o /tmp/ck-obs02.json -w '%{http_code}' -X GET \
+  'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'/recommendations-strategy' \
+  -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
+if [ "$STATUS" != "200" ]; then
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  exit 1
+fi
+if [ "$(jq -r '.environments.test.on' /tmp/ck-obs02.json)" != "true" ]; then
+  fail-message "**recommendations-strategy** is toggled off. Turn it on, then set its default rule to **Personalized**."
+  exit 1
+fi
+# Variation indexes: 0 = bestsellers, 1 = personalized.
+if [ "$(jq -r '.environments.test.fallthrough.variation // "rollout"' /tmp/ck-obs02.json)" != "1" ]; then
+  fail-message "The instrumentation is in place, but **recommendations-strategy** isn't serving **Personalized** yet. In the LaunchDarkly tab, edit the flag's default rule to serve **Personalized** and save — that's the release we want to observe."
+  exit 1
+fi
+
+exit 0

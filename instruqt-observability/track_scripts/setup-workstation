@@ -1,0 +1,137 @@
+#!/bin/bash
+#
+# Track-level setup for Observability (Track 2). Runs once when the lab
+# starts, as root, in operator context (LAUNCHDARKLY_ACCESS_TOKEN present).
+#
+# Steps 1–5 are identical to the Release track: bootstrap the project, pull
+# keys, mint the scoped lab token, write .env. Step 6 then materializes the
+# post-Release baseline by replaying the Release solve scripts in order, and
+# step 7 adds this track's own baseline (the recommendations carousel,
+# flagged). Every step is idempotent so an Instruqt retry of this script is
+# safe. Timing is logged per step; if the total creeps past ~60s, see the
+# "Trade-off accepted" note under "Three sibling tracks" in DECISIONS.md.
+#
+set -euo pipefail
+
+until [ -f /opt/instruqt/bootstrap/host-bootstrap-completed ]; do
+    echo "Waiting for instruqt bootstrap to complete"
+    sleep 1
+done
+
+BASE=/opt/ld/codecontrol
+TF=$BASE/terraform
+APP=$BASE/app
+RELEASE=$BASE/instruqt-release          # Release solve scripts, baked into the image
+T0=$SECONDS
+step() { echo "[setup +$((SECONDS - T0))s] $*"; }
+
+# ── 1. Bootstrap the student's LaunchDarkly project (test environment only)
+step "bootstrapping project"
+cd "$TF/student-bootstrap"
+echo "sandbox_id = \"${_SANDBOX_ID}\"" > terraform.tfvars
+terraform init -input=false
+terraform apply -auto-approve
+
+export LD_PROJECT_KEY="$(terraform output -raw project_key)"
+
+# ── 2. Pull the SDK key and client-side ID for the test environment
+ENV_JSON=$(curl -fsS -X GET \
+  "https://app.launchdarkly.com/api/v2/projects/${LD_PROJECT_KEY}/environments/test" \
+  -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}")
+export LD_CLIENT_KEY=$(echo "$ENV_JSON" | jq -r ._id)
+export LD_SDK_KEY=$(echo "$ENV_JSON" | jq -r .apiKey)
+
+for RC in ~/.profile ~/.bashrc; do
+  grep -qF "export LD_PROJECT_KEY=" "$RC" 2>/dev/null || {
+    echo "" >> "$RC"
+    echo "export LD_PROJECT_KEY=\"$LD_PROJECT_KEY\"" >> "$RC"
+    echo "export LD_CLIENT_KEY=${LD_CLIENT_KEY}" >> "$RC"
+    echo "export LD_SDK_KEY=${LD_SDK_KEY}" >> "$RC"
+  }
+done
+
+# ── 3. Mint a scoped API token restricted to this project only (see the
+# Release track's setup-workstation for the full rationale). The operator
+# token never lands in .env.
+step "minting scoped lab token"
+if [ -f /opt/ld/.ld_lab_token_id ]; then
+  OLD_TOKEN_ID=$(cat /opt/ld/.ld_lab_token_id)
+  curl -fsS -X DELETE \
+    "https://app.launchdarkly.com/api/v2/tokens/${OLD_TOKEN_ID}" \
+    -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}" || true
+fi
+TOKEN_JSON=$(curl -fsS -X POST \
+  "https://app.launchdarkly.com/api/v2/tokens" \
+  -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  --data-raw "$(jq -n \
+    --arg name "Lab token: ${LD_PROJECT_KEY}" \
+    --arg proj "${LD_PROJECT_KEY}" \
+    '{name: $name, inlineRole: [{effect: "allow", actions: ["*"], resources: [("proj/" + $proj), ("proj/" + $proj + ":*")]}]}')")
+LD_API_TOKEN=$(echo "$TOKEN_JSON" | jq -r .token)
+echo "$TOKEN_JSON" | jq -r ._id > /opt/ld/.ld_lab_token_id
+
+# ── 4. Write keys into the app's .env (never the operator token)
+APP_ENV=$APP/.env
+sed -i 's|^LD_SDK_KEY=.*|LD_SDK_KEY='"${LD_SDK_KEY}"'|g' "$APP_ENV"
+sed -i 's|^LD_CLIENT_KEY=.*|LD_CLIENT_KEY='"${LD_CLIENT_KEY}"'|g' "$APP_ENV"
+sed -i 's|^LD_PROJECT_KEY=.*|LD_PROJECT_KEY='"${LD_PROJECT_KEY}"'|g' "$APP_ENV"
+sed -i 's|^LD_API_TOKEN=.*|LD_API_TOKEN='"${LD_API_TOKEN}"'|g' "$APP_ENV"
+
+# ── 5. Replay the Release track's solves to reach the post-Release baseline:
+# release-otto exists, both SDKs wired with tier-aware contexts, the Beta
+# Testers segment, the completed progressive rollout (Otto on for everyone),
+# and the otto-style flag + otto-response-latency metric with their wiring.
+#
+# Deliberate deviations from a straight replay:
+#  - 08: targeted apply of the supporting infra only (same -target list as
+#    08's setup-workstation) so the baseline does NOT start a live guarded
+#    rollout of Chatty Otto. The pastes are applied as in 08's solve.
+#  - 09 (kill switch) is skipped entirely: its only effect is turning Otto
+#    off, and the Release track ends with Otto back on (see the note in
+#    terraform/release-09/main.tf). 07's solve leaves release-otto on.
+step "replaying Release solves"
+for CH in 02-your-first-flag 03-wire-up-the-sdk 04-contexts-and-targeting 05-segments 07-progressive-rollout; do
+  step "  release/$CH"
+  bash "$RELEASE/$CH/solve-workstation"
+done
+
+step "  release/08-guarded-release (supporting infra only)"
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly Otto style" "$TF/release-08/pastes/server-otto-style.py"
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly event tracking" "$TF/release-08/pastes/server-tracking.py"
+cd "$TF/release-08"
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+terraform apply -auto-approve \
+  -target=launchdarkly_feature_flag.otto_style \
+  -target=launchdarkly_feature_flag_environment.otto_style_test \
+  -target=launchdarkly_metric.otto_response_latency
+
+# ── 6. This track's baseline: the "Recommended for You" carousel, live and
+# flagged (show-recommendations on; recommendations-strategy serving
+# bestsellers), plus the server-side wiring that evaluates both flags.
+step "applying observability baseline (recommendations carousel)"
+cd "$TF/observability-baseline"
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+terraform apply -auto-approve
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly recommendations" "$TF/observability-baseline/pastes/server-recommendations.py"
+
+# ── 7. Restart the ToggleWear service with the fresh .env and pastes.
+# Explicit stop/start: uvicorn's --reload only watches source files, so .env
+# changes need a real restart.
+step "restarting togglewear"
+service togglewear stop || true
+service togglewear start
+
+# Wait for the wired server to answer, so the first challenge's tabs don't
+# load a half-started app.
+for _ in $(seq 1 30); do
+  if curl -fsS localhost:3000/healthz 2>/dev/null | jq -e '.ld_wired == true' >/dev/null; then
+    break
+  fi
+  sleep 1
+done
+curl -fsS localhost:3000/healthz || echo "WARNING: togglewear did not report healthy within 30s" >&2
+
+step "done (total $((SECONDS - T0))s)"

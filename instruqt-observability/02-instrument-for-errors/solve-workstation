@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Materialize the end-state of 02-instrument-for-errors: both observability
+# pastes applied and the personalized strategy shipped to the default rule.
+#
+# Self-sufficient: writes tfvars and inits so later tracks can replay it.
+#
+set -euo pipefail
+
+APP=/opt/ld/codecontrol/app
+TF=/opt/ld/codecontrol/terraform
+
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly SDK setup" "$TF/observability-02/pastes/server-sdk-setup.py"
+python3 "$TF/lib/patch_block.py" "$APP/static/app.js" "LaunchDarkly client SDK" "$TF/observability-02/pastes/client-sdk.js"
+
+cd "$TF/observability-02"
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+terraform apply -auto-approve
+
+# uvicorn --reload picks up server.py on save; give the plugin a moment to
+# initialize before any check hits /healthz.
+sleep 3
+exit 0

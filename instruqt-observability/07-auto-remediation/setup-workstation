@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# Runs when the challenge starts. Ensures the flag starts on bestsellers (the
+# learner arms the trigger first, then releases personalized), prepares the
+# solve module, and keeps traffic flowing so the error signal rises quickly
+# once personalized is live. Does NOT create the trigger.
+#
+set -euo pipefail
+
+TF=/opt/ld/codecontrol/terraform
+
+cd "$TF/observability-07"
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+
+bash "$TF/lib/set-fallthrough.sh" "${LD_PROJECT_KEY}" recommendations-strategy bestsellers \
+  || echo "WARNING: could not reset recommendations-strategy to bestsellers (06's rollout may still be monitoring — the lab tells the learner to stop it); continuing" >&2
+
+systemctl is-active --quiet togglewear-traffic || bash "$TF/lib/traffic.sh" recs
+exit 0

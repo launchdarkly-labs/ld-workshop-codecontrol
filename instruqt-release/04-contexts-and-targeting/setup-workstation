@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# Runs when the challenge starts. Prepares the solve module; does NOT apply
+# it (solve-workstation does that if the learner skips).
+#
+set -euo pipefail
+
+cd /opt/ld/codecontrol/terraform/release-04
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+exit 0

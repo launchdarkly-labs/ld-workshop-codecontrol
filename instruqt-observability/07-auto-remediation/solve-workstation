@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Materialize the HEALED end-state of 07-auto-remediation (default rule on
+# bestsellers). The adaptive trigger itself cannot be created via the public
+# API — the module logs that loudly. See terraform/observability-07/main.tf.
+#
+# Self-sufficient: writes tfvars and inits so later tracks can replay it.
+#
+set -euo pipefail
+
+cd /opt/ld/codecontrol/terraform/observability-07
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+terraform apply -auto-approve
+exit 0

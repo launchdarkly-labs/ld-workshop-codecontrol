@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Materialize the end-state of 06-promote-the-winner: iteration stopped with
+# Personalized as the winner; default rule serves Personalized. Runs 04's
+# solve first so the chain works from any skip point.
+#
+set -euo pipefail
+bash /opt/ld/codecontrol/instruqt-iterate/04-run-and-read/solve-workstation
+cd /opt/ld/codecontrol/terraform/iterate-06
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+terraform apply -auto-approve
+exit 0

@@ -1,0 +1,46 @@
+#!/bin/bash
+#
+# Verify the Beta Testers segment exists with the tier rule and that
+# release-otto's targeting rule references the segment.
+#
+
+STATUS=$(curl -s -o /tmp/ck-rel05-seg.json -w '%{http_code}' -X GET \
+  'https://app.launchdarkly.com/api/v2/segments/'$LD_PROJECT_KEY'/test/beta-testers' \
+  -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
+if [ "$STATUS" != "200" ] && [ "$STATUS" != "404" ]; then
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  exit 1
+fi
+SEGMENT=$(cat /tmp/ck-rel05-seg.json)
+
+if [ "$(echo "$SEGMENT" | jq -r .key)" != "beta-testers" ]; then
+  fail-message "The **Beta Testers** segment doesn't exist yet. Create it in the LaunchDarkly tab — the segment key must be exactly \`beta-testers\`."
+  exit 1
+fi
+
+SEG_RULE_OK=$(echo "$SEGMENT" | jq '[.rules[]? |
+    select(.clauses[]? | select(.attribute == "tier" and (.values | index("beta"))))
+  ] | length > 0')
+if [ "$SEG_RULE_OK" != "true" ]; then
+  fail-message "The segment exists but has no rule matching beta users. Add a rule to the segment: if \`tier\` is one of \`beta\`."
+  exit 1
+fi
+
+STATUS=$(curl -s -o /tmp/ck-rel05-flag.json -w '%{http_code}' -X GET \
+  'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'/release-otto' \
+  -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
+if [ "$STATUS" != "200" ]; then
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  exit 1
+fi
+FLAG_ENV=$(jq '.environments.test' /tmp/ck-rel05-flag.json)
+
+SEG_TARGETED=$(echo "$FLAG_ENV" | jq '[.rules[]? |
+    select(.clauses[]? | select(.op == "segmentMatch" and (.values | index("beta-testers"))))
+  ] | length > 0')
+if [ "$SEG_TARGETED" != "true" ]; then
+  fail-message "**release-otto** doesn't target the segment yet. Edit the flag's targeting rule so the condition is: context **is in** the segment **Beta Testers**, serving \`true\`."
+  exit 1
+fi
+
+exit 0

@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# Destroy the student's LaunchDarkly project (and everything in it). A
+# destroy failure must propagate (non-zero exit) so Instruqt retries —
+# silent failures accumulate orphaned sandbox projects.
+#
+cd /opt/ld/codecontrol/terraform/student-bootstrap || exit 1
+terraform destroy -auto-approve || exit 1
+
+# Best-effort: delete the scoped lab token minted at setup so tokens
+# don't accumulate in the account.
+if [ -f /opt/ld/.ld_lab_token_id ]; then
+  TOKEN_ID=$(cat /opt/ld/.ld_lab_token_id)
+  curl -fsS -X DELETE \
+    "https://app.launchdarkly.com/api/v2/tokens/${TOKEN_ID}" \
+    -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}" || true
+fi
+exit 0

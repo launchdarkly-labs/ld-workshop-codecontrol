@@ -1,0 +1,34 @@
+slug: ld-codecontrol-release
+id: 7njphf0ftwtw
+title: 'LaunchDarkly CodeControl: Release'
+teaser: Feature-flag fundamentals through a guarded release with automatic rollback.
+description: |-
+  ToggleWear is live, and you're the developer on the hook for shipping
+  changes without breaking it. In this track you'll take Otto, a new chat
+  widget, from an idea to a fully released feature: create your first flag,
+  wire the LaunchDarkly SDKs into the app, target beta users, build a
+  segment, ramp Otto out progressively, and finally ship a guarded release
+  that rolls itself back when a bad variation degrades a real metric. You'll
+  leave knowing how to release anything without holding your breath.
+icon: https://launchdarkly.com/favicon-dark-mode.png
+tags:
+- codecontrol
+- release
+- feature-flags
+owner: launchdarkly
+developers:
+- kcochran@launchdarkly.com
+show_timer: true
+timelimit: 7200
+lab_config:
+  extend_ttl: 3600
+  feedback_recap_enabled: true
+  feedback_tab_enabled: false
+  loadingMessages: true
+  theme:
+    name: modern-dark
+  override_challenge_layout: false
+  hideStopButton: false
+  default_layout: AssignmentRight
+  default_layout_sidebar_size: 25
+enhanced_loading: false

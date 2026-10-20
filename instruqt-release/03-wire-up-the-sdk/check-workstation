@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# Verify the SDK pastes landed, the service is running wired, and the flag
+# is turned on.
+#
+
+APP_DIR=/opt/ld/codecontrol/app
+
+if ! grep -q 'ldclient.set_config' "$APP_DIR/server.py"; then
+  fail-message "The server SDK isn't wired up yet. Paste the SDK setup block into the marked stub in \`server.py\` (the block that sets \`ld_client = None\`)."
+  exit 1
+fi
+
+if ! grep -q 'Context.builder' "$APP_DIR/server.py"; then
+  fail-message "The context builder is still a stub. Paste the context block into the marked stub in \`build_context\` in \`server.py\` — without it, flag evaluations have no one to evaluate for."
+  exit 1
+fi
+
+if ! grep -q 'ld_client.variation("release-otto"' "$APP_DIR/server.py"; then
+  fail-message "The flag evaluation is missing. Paste the Otto flag block into the marked stub in the \`/chat\` handler in \`server.py\`."
+  exit 1
+fi
+
+if ! grep -q 'LDClient.createClient' "$APP_DIR/static/app.js"; then
+  fail-message "The client SDK isn't wired up yet. Paste the client SDK block into the marked stub in \`app.js\`."
+  exit 1
+fi
+
+WIRED=$(curl -s localhost:3000/healthz | jq -r .ld_wired)
+if [ "$WIRED" != "true" ]; then
+  fail-message "The pastes are in place but the running server isn't wired. Make sure you saved \`server.py\` — the service reloads automatically on save. If it still fails, check the file for a paste that landed in the wrong spot."
+  exit 1
+fi
+
+STATUS=$(curl -s -o /tmp/ck-rel03.json -w '%{http_code}' -X GET \
+  'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'/release-otto' \
+  -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
+if [ "$STATUS" != "200" ]; then
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  exit 1
+fi
+FLAG_ON=$(jq -r '.environments.test.on' /tmp/ck-rel03.json)
+
+if [ "$FLAG_ON" != "true" ]; then
+  fail-message "The code is wired up, but **release-otto** is still off. Toggle the flag **On** in the LaunchDarkly tab, then refresh the ToggleWear tab — Otto should appear."
+  exit 1
+fi
+
+exit 0

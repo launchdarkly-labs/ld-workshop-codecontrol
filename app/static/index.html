@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ToggleWear — Wear your features on your sleeve.</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">◐</span>
+    <span class="brand-name">ToggleWear</span>
+  </div>
+  <nav class="primary-nav" aria-label="Primary">
+    <a href="#shop">Shop</a>
+    <a href="#about">About</a>
+    <a href="#support">Support</a>
+  </nav>
+  <div class="tier-switch">
+    <label for="user-tier">Logged in as</label>
+    <select id="user-tier" name="user-tier">
+      <option value="free" selected>Free user</option>
+      <option value="premium">Premium user</option>
+      <option value="beta">Beta user</option>
+    </select>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>Wear your features on your sleeve.</h1>
+    <p class="hero-sub">LaunchDarkly-branded apparel for people who ship.</p>
+  </section>
+
+  <section id="shop" class="product-grid" aria-label="Products"></section>
+
+  <section id="recs" class="recs" aria-label="Recommended for you">
+    <h2 class="recs-title">Recommended for You</h2>
+    <div id="recs-track" class="recs-track"></div>
+  </section>
+</main>
+
+<aside class="otto" aria-label="Otto, ToggleWear's shopping assistant" hidden>
+  <button id="otto-toggle" class="otto-toggle" aria-expanded="false" aria-controls="otto-panel">
+    <span class="otto-toggle-dot" aria-hidden="true"></span>
+    <span>Chat with Otto</span>
+  </button>
+  <div id="otto-panel" class="otto-panel" hidden>
+    <div class="otto-header">
+      <span class="otto-title">Otto</span>
+      <span class="otto-subtitle">ToggleWear shopping assistant</span>
+      <div class="otto-actions">
+        <button id="otto-reset" class="otto-reset" aria-label="Reset chat" title="Reset chat">↻</button>
+        <button id="otto-close" class="otto-close" aria-label="Close chat">&times;</button>
+      </div>
+    </div>
+    <div id="otto-transcript" class="otto-transcript" role="log" aria-live="polite"></div>
+    <form id="otto-form" class="otto-form" autocomplete="off">
+      <input
+        id="otto-input"
+        class="otto-input"
+        type="text"
+        name="message"
+        placeholder="Ask Otto about products, sizing, or shipping…"
+        aria-label="Message Otto"
+        required>
+      <button type="submit" class="otto-send" aria-label="Send">Send</button>
+    </form>
+    <div id="otto-meta" class="otto-meta"></div>
+  </div>
+</aside>
+
+<footer class="site-footer">
+  <small>&copy; ToggleWear. A fictional shop for a real LaunchDarkly workshop.</small>
+</footer>
+
+<!-- LaunchDarkly browser bundles, all vendored (see static/vendor/README.md):
+     - the JS client SDK (v4) as an IIFE exposing the LDClient global used by
+       the SDK-wiring lab's paste block in app.js;
+     - the observability and session-replay plugins (UMD), exposing the
+       Observability and SessionReplay globals the Observability track's
+       instrumentation lab passes into LDClient.createClient. Until that lab,
+       they only define globals. -->
+<script src="/static/vendor/ldclient-v4.9.1.min.js"></script>
+<script src="/static/vendor/ld-observability-v1.2.1.umd.js"></script>
+<script src="/static/vendor/ld-session-replay-v1.2.1.umd.js"></script>
+<script src="/static/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+# 03 is exploratory: a successful learner changed nothing. Solve therefore
+# materializes the same state the lab depends on (02's end-state), which is
+# idempotent to re-apply.
+#
+set -euo pipefail
+bash /opt/ld/codecontrol/instruqt-observability/02-instrument-for-errors/solve-workstation
+exit 0

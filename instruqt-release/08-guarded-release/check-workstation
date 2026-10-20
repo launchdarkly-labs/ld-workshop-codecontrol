@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# Verify the guarded rollout exists on otto-style (any status — monitoring,
+# regressed, rolledBack, or completed all count; a learner whose rollout
+# already rolled back has succeeded at this lab).
+#
+# VERIFY: confirm during the operator click-through that a Serve-menu
+# guarded rollout (and the solve's pipeline-based monitored release) both
+# register under the flags-list `guardedRollout:` filter.
+#
+
+ld_get() {
+  # ld_get <output-file> <url> — curl with status capture; fails the check
+  # with a retry message on transport/auth errors (404 passes through).
+  local out=$1 url=$2
+  local status
+  status=$(curl -s -o "$out" -w '%{http_code}' -X GET "$url" \
+    -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
+  if [ "$status" != "200" ] && [ "$status" != "404" ]; then
+    fail-message "Couldn't reach the LaunchDarkly API (HTTP $status). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+    exit 1
+  fi
+}
+
+ld_get /tmp/ck-rel08-flag.json \
+  'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'/otto-style'
+if [ "$(jq -r .key /tmp/ck-rel08-flag.json)" != "otto-style" ]; then
+  fail-message "The **otto-style** flag is missing. It should have been created when this challenge started — try restarting the challenge, or ask your instructor."
+  exit 1
+fi
+
+ld_get /tmp/ck-rel08-metric.json \
+  'https://app.launchdarkly.com/api/v2/metrics/'$LD_PROJECT_KEY'/otto-response-latency'
+if [ "$(jq -r .key /tmp/ck-rel08-metric.json)" != "otto-response-latency" ]; then
+  fail-message "The **otto-response-latency** metric is missing. It should have been created when this challenge started — try restarting the challenge, or ask your instructor."
+  exit 1
+fi
+
+ld_get /tmp/ck-rel08-guarded.json \
+  'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'?filter=guardedRollout:any'
+GUARDED=$(jq '[.items[]?.key] | index("otto-style") != null' /tmp/ck-rel08-guarded.json)
+
+if [ "$GUARDED" != "true" ]; then
+  fail-message "No guarded rollout found on **otto-style**. Edit the default rule, change the served variation to **Chatty Otto**, choose **Guarded rollout** from the Serve menu, attach the **otto-response-latency** metric, check **Automatic rollback**, and save."
+  exit 1
+fi
+
+exit 0

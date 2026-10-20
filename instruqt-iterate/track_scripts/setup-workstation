@@ -1,0 +1,123 @@
+#!/bin/bash
+#
+# Track-level setup for Iterate (Track 3). Runs once when the lab starts, as
+# root, in operator context (LAUNCHDARKLY_ACCESS_TOKEN present).
+#
+# Steps 1–4 are identical to the Release and Observability tracks. Step 5
+# replays the Release solves (same deviations as Observability's setup: 08
+# infra only, 09 skipped) and applies the recommendations-carousel baseline
+# module shared with Observability. Step 6 is Iterate-specific: the
+# personalized strategy's bug is FIXED (this track measures engagement, not
+# errors) and traffic switches to the experiment profile. The observability
+# plugins are NOT applied — the experiment doesn't need them (lean-minimal
+# baseline, see PHASES-iterate.md Phase 0 notes).
+#
+set -euo pipefail
+
+until [ -f /opt/instruqt/bootstrap/host-bootstrap-completed ]; do
+    echo "Waiting for instruqt bootstrap to complete"
+    sleep 1
+done
+
+BASE=/opt/ld/codecontrol
+TF=$BASE/terraform
+APP=$BASE/app
+RELEASE=$BASE/instruqt-release
+T0=$SECONDS
+step() { echo "[setup +$((SECONDS - T0))s] $*"; }
+
+# ── 1. Bootstrap the student's LaunchDarkly project (test environment only)
+step "bootstrapping project"
+cd "$TF/student-bootstrap"
+echo "sandbox_id = \"${_SANDBOX_ID}\"" > terraform.tfvars
+terraform init -input=false
+terraform apply -auto-approve
+
+export LD_PROJECT_KEY="$(terraform output -raw project_key)"
+
+# ── 2. Pull the SDK key and client-side ID for the test environment
+ENV_JSON=$(curl -fsS -X GET \
+  "https://app.launchdarkly.com/api/v2/projects/${LD_PROJECT_KEY}/environments/test" \
+  -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}")
+export LD_CLIENT_KEY=$(echo "$ENV_JSON" | jq -r ._id)
+export LD_SDK_KEY=$(echo "$ENV_JSON" | jq -r .apiKey)
+
+for RC in ~/.profile ~/.bashrc; do
+  grep -qF "export LD_PROJECT_KEY=" "$RC" 2>/dev/null || {
+    echo "" >> "$RC"
+    echo "export LD_PROJECT_KEY=\"$LD_PROJECT_KEY\"" >> "$RC"
+    echo "export LD_CLIENT_KEY=${LD_CLIENT_KEY}" >> "$RC"
+    echo "export LD_SDK_KEY=${LD_SDK_KEY}" >> "$RC"
+  }
+done
+
+# ── 3. Mint a scoped API token restricted to this project only (rationale in
+# the Release track's setup-workstation). The operator token never lands in
+# .env.
+step "minting scoped lab token"
+if [ -f /opt/ld/.ld_lab_token_id ]; then
+  OLD_TOKEN_ID=$(cat /opt/ld/.ld_lab_token_id)
+  curl -fsS -X DELETE \
+    "https://app.launchdarkly.com/api/v2/tokens/${OLD_TOKEN_ID}" \
+    -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}" || true
+fi
+TOKEN_JSON=$(curl -fsS -X POST \
+  "https://app.launchdarkly.com/api/v2/tokens" \
+  -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  --data-raw "$(jq -n \
+    --arg name "Lab token: ${LD_PROJECT_KEY}" \
+    --arg proj "${LD_PROJECT_KEY}" \
+    '{name: $name, inlineRole: [{effect: "allow", actions: ["*"], resources: [("proj/" + $proj), ("proj/" + $proj + ":*")]}]}')")
+LD_API_TOKEN=$(echo "$TOKEN_JSON" | jq -r .token)
+echo "$TOKEN_JSON" | jq -r ._id > /opt/ld/.ld_lab_token_id
+
+# ── 4. Write keys into the app's .env (never the operator token)
+APP_ENV=$APP/.env
+sed -i 's|^LD_SDK_KEY=.*|LD_SDK_KEY='"${LD_SDK_KEY}"'|g' "$APP_ENV"
+sed -i 's|^LD_CLIENT_KEY=.*|LD_CLIENT_KEY='"${LD_CLIENT_KEY}"'|g' "$APP_ENV"
+sed -i 's|^LD_PROJECT_KEY=.*|LD_PROJECT_KEY='"${LD_PROJECT_KEY}"'|g' "$APP_ENV"
+sed -i 's|^LD_API_TOKEN=.*|LD_API_TOKEN='"${LD_API_TOKEN}"'|g' "$APP_ENV"
+
+# ── 5. Post-Release baseline + the carousel (shared with Observability)
+step "replaying Release solves"
+for CH in 02-your-first-flag 03-wire-up-the-sdk 04-contexts-and-targeting 05-segments 07-progressive-rollout; do
+  step "  release/$CH"
+  bash "$RELEASE/$CH/solve-workstation"
+done
+step "  release/08-guarded-release (supporting infra only)"
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly Otto style" "$TF/release-08/pastes/server-otto-style.py"
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly event tracking" "$TF/release-08/pastes/server-tracking.py"
+cd "$TF/release-08"
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+terraform apply -auto-approve \
+  -target=launchdarkly_feature_flag.otto_style \
+  -target=launchdarkly_feature_flag_environment.otto_style_test \
+  -target=launchdarkly_metric.otto_response_latency
+
+step "applying recommendations baseline"
+cd "$TF/observability-baseline"
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+terraform apply -auto-approve
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly recommendations" "$TF/observability-baseline/pastes/server-recommendations.py"
+
+# ── 6. Iterate-specific: fix the personalized bug, start experiment traffic
+step "fixing the personalized strategy + starting experiment traffic"
+bash "$TF/lib/fix-personalized-bug.sh"
+bash "$TF/lib/traffic.sh" exp
+
+# ── 7. Restart the ToggleWear service with the fresh .env and pastes
+step "restarting togglewear"
+service togglewear stop || true
+service togglewear start
+for _ in $(seq 1 30); do
+  if curl -fsS localhost:3000/healthz 2>/dev/null | jq -e '.ld_wired == true' >/dev/null; then
+    break
+  fi
+  sleep 1
+done
+curl -fsS localhost:3000/healthz || echo "WARNING: togglewear did not report healthy within 30s" >&2
+
+step "done (total $((SECONDS - T0))s)"

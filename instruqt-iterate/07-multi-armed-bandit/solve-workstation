@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Materialize the end-state of 07-multi-armed-bandit: a running bandit on
+# recommendations-strategy. Runs 06's solve first so the A/B experiment is
+# stopped (two running experiments on one rule aren't allowed).
+#
+set -euo pipefail
+bash /opt/ld/codecontrol/instruqt-iterate/06-promote-the-winner/solve-workstation
+cd /opt/ld/codecontrol/terraform/iterate-07
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+terraform apply -auto-approve
+exit 0

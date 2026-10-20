@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# Materialize the end-state of 02-your-first-metric: the track() paste and
+# the recs-engagement metric.
+#
+# Self-sufficient: writes tfvars and inits.
+#
+set -euo pipefail
+APP=/opt/ld/codecontrol/app
+TF=/opt/ld/codecontrol/terraform
+python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly engagement tracking" "$TF/iterate-02/pastes/server-engagement.py"
+cd "$TF/iterate-02"
+echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
+terraform init -input=false
+# If the learner created the metric in the UI under a different key, adopt
+# nothing — a second metric on the same event key is harmless, and later
+# solves resolve the metric by event key.
+terraform apply -auto-approve
+sleep 2
+exit 0

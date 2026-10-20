@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# Welcome challenge — nothing to set up.
+#
+exit 0
