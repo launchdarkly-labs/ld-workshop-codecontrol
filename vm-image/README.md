@@ -92,8 +92,7 @@ hosts over HTTPS. If a network blocks 4317, uncomment the
 ### Written at lab start, never baked
 
 `/opt/ld/ld.env` (project/env/SDK/client keys for lifecycle scripts),
-`app/.env` values, the scoped `LD_API_TOKEN`, and the sandbox's LaunchDarkly
-project itself. `LAUNCHDARKLY_ACCESS_TOKEN` and the AWS secrets arrive from
+`app/.env` values, and the sandbox's LaunchDarkly project itself. `LAUNCHDARKLY_ACCESS_TOKEN` and the AWS secrets arrive from
 Instruqt only inside lifecycle scripts and are never written to disk.
 
 ## Handoff checklist

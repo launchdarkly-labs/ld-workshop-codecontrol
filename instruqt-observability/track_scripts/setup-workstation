@@ -40,11 +40,15 @@ export LD_PROJECT_KEY="$(terraform output -json | jq -r '.students.value[0].proj
 export LD_ENV_KEY="test"
 
 # ── 2. Pull the SDK key and client-side ID for the test environment
-ENV_JSON=$(curl -fsS -X GET \
+ENV_STATUS=$(curl -sS -o /tmp/ld-env.json -w '%{http_code}' -X GET \
   "https://app.launchdarkly.com/api/v2/projects/${LD_PROJECT_KEY}/environments/${LD_ENV_KEY}" \
   -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}")
-export LD_CLIENT_KEY=$(echo "$ENV_JSON" | jq -r ._id)
-export LD_SDK_KEY=$(echo "$ENV_JSON" | jq -r .apiKey)
+if [ "$ENV_STATUS" != "200" ]; then
+  echo "ERROR: GET environments/${LD_ENV_KEY} for ${LD_PROJECT_KEY} returned HTTP ${ENV_STATUS}: $(cat /tmp/ld-env.json)" >&2
+  exit 1
+fi
+export LD_CLIENT_KEY=$(jq -r ._id /tmp/ld-env.json)
+export LD_SDK_KEY=$(jq -r .apiKey /tmp/ld-env.json)
 
 for RC in ~/.profile ~/.bashrc; do
   grep -qF "export LD_PROJECT_KEY=" "$RC" 2>/dev/null || {
@@ -72,35 +76,14 @@ chmod 600 /opt/ld/ld.env
 agent variable set LD_PROJECT_KEY "${LD_PROJECT_KEY}" || true
 agent variable set LD_CLIENT_KEY "${LD_CLIENT_KEY}" || true
 
-# ── 3. Mint a scoped API token restricted to this project only (see the
-# Release track's setup-workstation for the full rationale). The operator
-# token never lands in .env.
-step "minting scoped lab token"
-if [ -f /opt/ld/.ld_lab_token_id ]; then
-  OLD_TOKEN_ID=$(cat /opt/ld/.ld_lab_token_id)
-  curl -fsS -X DELETE \
-    "https://app.launchdarkly.com/api/v2/tokens/${OLD_TOKEN_ID}" \
-    -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}" || true
-fi
-TOKEN_JSON=$(curl -fsS -X POST \
-  "https://app.launchdarkly.com/api/v2/tokens" \
-  -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}" \
-  -H "Content-Type: application/json" \
-  --data-raw "$(jq -n \
-    --arg name "Lab token: ${LD_PROJECT_KEY}" \
-    --arg proj "${LD_PROJECT_KEY}" \
-    '{name: $name, inlineRole: [{effect: "allow", actions: ["*"], resources: [("proj/" + $proj), ("proj/" + $proj + ":*")]}]}')")
-LD_API_TOKEN=$(echo "$TOKEN_JSON" | jq -r .token)
-echo "$TOKEN_JSON" | jq -r ._id > /opt/ld/.ld_lab_token_id
 
-# ── 4. Write keys into the app's .env (never the operator token)
+# ── 3. Write keys into the app's .env (never the operator token)
 APP_ENV=$APP/.env
 sed -i 's|^LD_SDK_KEY=.*|LD_SDK_KEY='"${LD_SDK_KEY}"'|g' "$APP_ENV"
 sed -i 's|^LD_CLIENT_KEY=.*|LD_CLIENT_KEY='"${LD_CLIENT_KEY}"'|g' "$APP_ENV"
 sed -i 's|^LD_PROJECT_KEY=.*|LD_PROJECT_KEY='"${LD_PROJECT_KEY}"'|g' "$APP_ENV"
-sed -i 's|^LD_API_TOKEN=.*|LD_API_TOKEN='"${LD_API_TOKEN}"'|g' "$APP_ENV"
 
-# ── 5. Replay the Release track's solves to reach the post-Release baseline:
+# ── 4. Replay the Release track's solves to reach the post-Release baseline:
 # release-otto exists, both SDKs wired with tier-aware contexts, the Beta
 # Testers segment, the completed progressive rollout (Otto on for everyone),
 # and the otto-style flag + otto-response-latency metric with their wiring.
@@ -129,7 +112,7 @@ terraform apply -auto-approve \
   -target=launchdarkly_feature_flag_environment.otto_style_test \
   -target=launchdarkly_metric.otto_response_latency
 
-# ── 6. This track's baseline: the "Recommended for You" carousel, live and
+# ── 5. This track's baseline: the "Recommended for You" carousel, live and
 # flagged (show-recommendations on; recommendations-strategy serving
 # bestsellers), plus the server-side wiring that evaluates both flags.
 step "applying observability baseline (recommendations carousel)"
@@ -139,7 +122,7 @@ terraform init -input=false
 terraform apply -auto-approve
 python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly recommendations" "$TF/observability-baseline/pastes/server-recommendations.py"
 
-# ── 7. Restart the ToggleWear service with the fresh .env and pastes.
+# ── 6. Restart the ToggleWear service with the fresh .env and pastes.
 # Explicit stop/start: uvicorn's --reload only watches source files, so .env
 # changes need a real restart.
 step "restarting togglewear"

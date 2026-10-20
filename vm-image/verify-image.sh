@@ -24,7 +24,7 @@ echo "Source tree"
 for d in app terraform/observability-baseline terraform/lib traffic-generator instruqt-release instruqt-observability instruqt-iterate; do
   check "$DEST/$d" "test -d $DEST/$d"
 done
-check "app/.env seeded with KEY= lines"      "grep -q '^LD_SDK_KEY=' $DEST/app/.env && grep -q '^LD_API_TOKEN=' $DEST/app/.env"
+check "app/.env seeded with KEY= lines"      "grep -q '^LD_SDK_KEY=' $DEST/app/.env && grep -q '^LD_CLIENT_KEY=' $DEST/app/.env"
 check "no .remote / tfstate / .git baked"    "! find $DEST \( -name '*.remote' -o -name '*.tfstate' -o -name '.git' \) | grep -q ."
 check "release solve scripts executable"     "test -x $DEST/instruqt-release/02-your-first-flag/solve-workstation"
 check "lib helpers executable"               "test -x $DEST/terraform/lib/traffic.sh && test -x $DEST/terraform/lib/set-fallthrough.sh && test -x $DEST/terraform/lib/exp.sh"

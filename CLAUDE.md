@@ -214,12 +214,10 @@ Solve scripts apply the per-challenge Terraform module to materialize the resour
 
 `config.yml` declares the virtual browser (the magic-login Lambda from the skill contract), the VM, and the four required secrets (`AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `LAUNCHDARKLY_ACCESS_TOKEN`). The AWS secrets exist solely for the participant Terraform's login-handler state and DynamoDB records; nothing in this repo reads them. There is no LLM provider, no Bedrock, no GCP federation.
 
-There are **two** LaunchDarkly credential pathways, separated by security boundary — do not conflate them:
+There is **one** LaunchDarkly credential in play, and it must stay in operator context:
 
-- **`LAUNCHDARKLY_ACCESS_TOKEN` (Instruqt secret)** — the operator's master API token. Available in the environment of `setup-workstation` / `check-workstation` / `solve-workstation` scripts and Terraform `local-exec` blocks. **Never** written to disk — not `app/.env`, not `/opt/ld/ld.env`, nowhere the participant's app or shell can read it.
-- **`LD_API_TOKEN` (minted per lab session)** — a scoped LaunchDarkly API token created at track-level `setup-workstation` time by exchanging the operator token via `POST /api/v2/tokens`, with an inline role restricting it to the participant's project (`proj/<key>` and `proj/<key>:*`). Written into `app/.env` so the ToggleWear service can make runtime REST calls (e.g. the auto-remediation flag flip in Observability). Safe to expose because the blast radius is a sandbox project destroyed at cleanup.
-
-Runtime code in `app/` and `traffic-generator/` reads only `LD_API_TOKEN`. Anywhere `LAUNCHDARKLY_ACCESS_TOKEN` appears, it must be in operator-context code.
+- **`LAUNCHDARKLY_ACCESS_TOKEN` (Instruqt team secret)** — the workshops account's service token, the same one the participant Terraform provider uses. Available in the environment of `setup-workstation` / `check-workstation` / `solve-workstation` scripts and Terraform `local-exec` blocks. **Never** written to disk — not `app/.env`, not `/opt/ld/ld.env`, nowhere the participant's app or shell can read it.
+- The app and traffic generator read only the SDK key, client-side ID, and project key from `app/.env`. No runtime code calls the LaunchDarkly REST API. (An earlier design minted a per-lab scoped `LD_API_TOKEN` for an app-side auto-remediation loop; adaptive triggers replaced that loop, and the first live play showed the team's service token cannot create tokens — HTTP 403 — so minting was removed. See `DECISIONS.md`.)
 
 `track.yml` declares slug, ID, title, teaser, description, owner, time limit (7200 = 2hr), and lab config. Use `default_layout: AssignmentRight` and `default_layout_sidebar_size: 25` to match the reference.
 
@@ -228,9 +226,8 @@ Runtime code in `app/` and `traffic-generator/` reads only `LD_API_TOKEN`. Anywh
 The track-level `track_scripts/setup-workstation` runs once when the lab starts. For **Release** it:
 1. Applies the participant Terraform in `/opt/ld/ld-workshop-participant` (skill contract) to create the LD project, `test` environment, team member, and magic-login record; reads the project key from its `students` output.
 2. Pulls the SDK key and client-side ID from the LD API.
-3. Mints the scoped `LD_API_TOKEN`.
-4. Writes keys to `~/.profile`, `~/.bashrc`, `/opt/ld/ld.env` (for lifecycle scripts), `app/.env` (for the service), and the Instruqt agent variables (for assignments).
-5. Restarts the ToggleWear service.
+3. Writes keys to `~/.profile`, `~/.bashrc`, `/opt/ld/ld.env` (for lifecycle scripts), `app/.env` (for the service), and the Instruqt agent variables (for assignments).
+4. Restarts the ToggleWear service.
 
 For **Observability** and **Iterate**, the track-level setup does all of the above, then applies the prior track's solve modules in order to materialize the baseline state (Otto shipped and rolled out; SDK wired; for Iterate, optionally the observability instrumentation too). Time this: if applying prior solves pushes startup past ~60s, escalate to the operator about pre-baking the baseline state into the VM image instead. (This is the same trade-off the AgentControl Evaluate track flagged.)
 
