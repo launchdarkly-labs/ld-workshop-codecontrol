@@ -36,6 +36,20 @@ metric_key() {
 
 flag_json() { curl -fsS "$API/flags/$1/$FLAG" "${AUTHH[@]}"; }
 
+maintainer_id() {
+  # POST /experiments requires maintainerId, and a service token has no member
+  # identity of its own (first live play: HTTP 400 "maintainerId is required").
+  # Prefer the sandbox's own student member (instruqt+<project>@...), created
+  # by the participant Terraform; fall back to the first member in the account.
+  local proj="$1" id
+  id=$(curl -fsS "$API/members?limit=5&filter=query:instruqt%2B${proj}" "${AUTHH[@]}" 2>/dev/null \
+    | jq -r --arg p "instruqt+${proj}@" '[.items[] | select(.email | startswith($p))][0]._id // empty')
+  if [ -z "$id" ]; then
+    id=$(curl -fsS "$API/members?limit=1" "${AUTHH[@]}" 2>/dev/null | jq -r '.items[0]._id // empty')
+  fi
+  echo "$id"
+}
+
 case "$cmd" in
   metric-key)
     metric_key "$1" "$2"
@@ -49,10 +63,12 @@ case "$cmd" in
     # VERIFY: flagConfigVersion = the environment config's "version" (per the
     # FeatureFlagConfig schema); fall back to the flag's top-level _version.
     VER=$(echo "$FJ" | jq -r ".environments.$ENV.version // ._version")
-    BODY=$(jq -n --arg key "$KEY" --arg name "$NAME" --arg hypo "$HYPO" --arg metric "$METRIC" \
+    MAINT=$(maintainer_id "$PROJ")
+    [ -n "$MAINT" ] || { echo "ERROR: could not resolve a maintainerId (members API returned nothing)" >&2; exit 1; }
+    BODY=$(jq -n --arg key "$KEY" --arg name "$NAME" --arg hypo "$HYPO" --arg metric "$METRIC" --arg maint "$MAINT" \
       --arg best "$BEST_ID" --arg pers "$PERS_ID" --argjson ver "$VER" --arg type "$TYPE" --arg flag "$FLAG" '
       {
-        key: $key, name: $name, type: $type, methodology: "bayesian",
+        key: $key, name: $name, type: $type, methodology: "bayesian", maintainerId: $maint,
         description: "Created by the Iterate track solve script.",
         iteration: {
           hypothesis: $hypo,
