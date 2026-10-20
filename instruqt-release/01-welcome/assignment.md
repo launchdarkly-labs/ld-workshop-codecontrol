@@ -55,7 +55,7 @@ No LaunchDarkly experience required. This track teaches everything from zero.
 | 09 | Pull the kill switch. |
 | 10 | Wrap up. |
 
-This is Track 1 of the CodeControl series. **Observability** (releases you can see into) and **Iterate** (experiments that pick winners for you) build on what you do here.
+This is Track 1 of the CodeControl series. Track 2, **The Carousel That Broke Production** (release observability), and Track 3, **Bestsellers vs. Personalized: Let the Shop Decide** (experimentation), build on what you do here.
 
 # Look around
 

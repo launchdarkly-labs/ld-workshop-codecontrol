@@ -337,3 +337,17 @@ Two plays (the second after patching `terraform/lib/exp.sh` on the VM, since `li
 **What this means for the two guarded-release labs (Release 08, Observability 06):** a guarded rollout can only be started from the LaunchDarkly UI, so their `solve-workstation` scripts now materialize the state a successful learner ends in *after* the guard rolls the bad variation back — `otto-style` on Concise, `recommendations-strategy` on Bestsellers — and nothing else. Their checks still require a real guarded rollout (`?filter=guardedRollout:any`), so a learner who clicks Skip and then Check fails honestly. This is the same pattern already accepted for Observability 07's adaptive trigger, and it has no practical cost: Instruqt's Skip advances the learner regardless of the check, and later challenges' setups reset the flag states they need.
 
 Deleted: `terraform/lib/start-guarded-rollout.sh`, `terraform/release-08/start-guarded-rollout.sh`, the `null_resource.start_guarded_rollout` in `release-08` (and its `null` provider), and `observability-06`'s pipeline call (now a `set-fallthrough` to Bestsellers).
+
+---
+
+## Story-led track titles (2026-10-20)
+
+**Decision (operator):** the published titles are story-led rather than pillar-named. Slugs are unchanged (immutable after first push) and the pillar names Release / Observability / Iterate remain the internal names in this repo and in prose that refers to "the Release track".
+
+| Track | Slug | Title |
+|---|---|---|
+| 1 | `ld-codecontrol-release` | Shipping Otto: From First Flag to Guarded Release |
+| 2 | `ld-codecontrol-observability` | The Carousel That Broke Production |
+| 3 | `ld-codecontrol-iterate` | Bestsellers vs. Personalized: Let the Shop Decide |
+
+**Rationale:** the titles name what happens to ToggleWear, which is more inviting in a catalog than the product pillar, and each is a promise the labs keep. Trade-off accepted: Track 2's title alone doesn't say "LaunchDarkly" or "observability"; the teaser and the series tag carry that.

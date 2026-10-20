@@ -18,13 +18,13 @@ There's no single character being "built" here (unlike the AgentControl workshop
 
 Each track is a chapter in shipping confidently. The arc is light-touch — it lives in welcome/recap intros and in the transition line that closes each challenge.
 
-**Track 1 — Release: "Ship it without holding your breath."**
+**Track 1 — Release, titled *Shipping Otto: From First Flag to Guarded Release*: "Ship it without holding your breath."**
 The shop is live. You want to add Otto, a chat widget, but you don't want to expose him to everyone at once and hope for the best. You put Otto behind a flag, wire the SDK, target a few beta users, roll him out gradually, and finally ship a guarded release so that if a new version of Otto goes bad, LaunchDarkly rolls it back for you. You end knowing how to release anything safely.
 
-**Track 2 — Observability: "Know the moment something breaks — and fix it before anyone notices."**
+**Track 2 — Observability, titled *The Carousel That Broke Production*: "Know the moment something breaks — and fix it before anyone notices."**
 Otto's shipped. Now ToggleWear wants a "Recommended for You" carousel. You ship it — and it starts throwing errors in production on certain products. You instrument the app so errors show up attributed to the release that caused them, replay the exact session where a shopper watched the carousel vanish, watch release health per variation, guard the rollout on the real error signal you just wired, and finally set up auto-remediation so the system heals itself when the signal goes bad.
 
-**Track 3 — Iterate: "Stop guessing which version is better. Measure it."**
+**Track 3 — Iterate, titled *Bestsellers vs. Personalized: Let the Shop Decide*: "Stop guessing which version is better. Measure it."**
 The recommendations carousel works. But is the current version actually the best one? You create a metric, design an A/B experiment comparing two recommendation strategies, run it against live lab traffic, read the results, promote the winner, and then hand the decision to a multi-armed bandit that routes traffic to the best performer automatically. You end knowing how to let real data drive product decisions.
 
 ---

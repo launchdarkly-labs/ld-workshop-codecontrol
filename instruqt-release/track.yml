@@ -1,6 +1,6 @@
 slug: ld-codecontrol-release
 id: ydhzdlvet14f
-title: 'LaunchDarkly CodeControl: Release'
+title: 'Shipping Otto: From First Flag to Guarded Release'
 teaser: Feature-flag fundamentals through a guarded release with automatic rollback.
 description: |-
   ToggleWear is live, and you're the developer on the hook for shipping
@@ -34,5 +34,5 @@ lab_config:
   hideStopButton: false
   default_layout: AssignmentRight
   default_layout_sidebar_size: 25
-checksum: "12010974466020796320"
+checksum: "17324915691323096805"
 enhanced_loading: false

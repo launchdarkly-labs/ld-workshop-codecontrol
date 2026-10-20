@@ -52,7 +52,7 @@ You used a guarded rollout (06) and an adaptive trigger (07) on the same flag wi
 
 # Where to go from here
 
-- **Iterate (Track 3)** — the carousel works, but is Personalized actually *better* than Bestsellers, bug aside? Stop guessing. You'll create an engagement metric, design an A/B experiment between the two strategies, read the results, promote the winner, and then hand the decision to a multi-armed bandit that routes traffic to whichever strategy is winning.
+- **Track 3, *Bestsellers vs. Personalized: Let the Shop Decide*** — the carousel works, but is Personalized actually *better* than Bestsellers, bug aside? Stop guessing. You'll create an engagement metric, design an A/B experiment between the two strategies, read the results, promote the winner, and then hand the decision to a multi-armed bandit that routes traffic to whichever strategy is winning.
 - **Docs** — [launchdarkly.com/docs](https://launchdarkly.com/docs): the **Observability** section for the plugins, errors, and session replay; **Releases → Guarded rollouts** and **Flags → Adaptive triggers** for the two safety nets.
 
 # Otto says

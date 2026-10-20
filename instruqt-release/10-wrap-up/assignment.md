@@ -53,8 +53,8 @@ You used both a progressive rollout (07) and a guarded rollout (08). What's the 
 
 # Where to go from here
 
-- **Observability (Track 2)** — ToggleWear ships its next feature, a "Recommended for You" carousel, and it starts throwing errors in production on certain products. You'll instrument the app so errors show up attributed to the release that caused them, watch release health per variation, run a guarded release on a *real* instrumented error metric, and set up auto-remediation so the system heals itself.
-- **Iterate (Track 3)** — stop guessing which version is better; measure it. Experiments, metrics, and a multi-armed bandit that routes traffic to the winner automatically.
+- **Track 2, *The Carousel That Broke Production*** — ToggleWear ships its next feature, a "Recommended for You" carousel, and it starts throwing errors in production on certain products. You'll instrument the app so errors show up attributed to the release that caused them, watch release health per variation, run a guarded release on a *real* instrumented error metric, and set up auto-remediation so the system heals itself.
+- **Track 3, *Bestsellers vs. Personalized: Let the Shop Decide*** — stop guessing which version is better; measure it. Experiments, metrics, and a multi-armed bandit that routes traffic to the winner automatically.
 - **Docs** — [launchdarkly.com/docs](https://launchdarkly.com/docs), particularly the Releases section for everything you touched today.
 
 # Otto says

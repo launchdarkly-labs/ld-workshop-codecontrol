@@ -1,7 +1,7 @@
 slug: ld-codecontrol-observability
 id: xaf0whhzwmvp
 version: "3"
-title: 'LaunchDarkly CodeControl: Observability'
+title: The Carousel That Broke Production
 teaser: Release-scoped observability. See the error, replay the session, guard on
   the real signal, and let the system heal itself.
 description: |-
@@ -38,5 +38,5 @@ lab_config:
   hideStopButton: false
   default_layout: AssignmentRight
   default_layout_sidebar_size: 25
-checksum: "2701770526851629517"
+checksum: "7847448646862546172"
 enhanced_loading: false
