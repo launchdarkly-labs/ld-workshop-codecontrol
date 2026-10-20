@@ -65,31 +65,31 @@ In the [LaunchDarkly](#tab-0) tab, open **Multi-armed bandits** in the left side
 8. **Experiment audience**: the **default rule**.
 9. **Variation served to users outside this experiment**: **Personalized** (the current winner; nobody is outside, since you'll include everyone).
 10. Include **100%** of contexts.
-11. **Update frequency**: choose the shortest option offered. This is how often the bandit re-reads the results and shifts the split.
-    <!-- VERIFY: the available update-frequency options; the solve script assumes one minute is allowed -->
+11. **Update frequency**: choose **1 hour**, the shortest allowed. This is how often the bandit re-reads the results and shifts the split.
+    <!-- VERIFY: the update-frequency options in the UI; the API accepts 1–24 hours (live play, 2026-10-20) -->
 12. Leave the starting **Variations split** equal.
 13. Scroll up and click **Save**, then click **Start** and **Start multi-armed bandit**.
 
 ![Designing the bandit](../assets/itr-07-mab-design.png)
 
-# Watch it shift
+# Read it, and know what happens next
 
 Open the bandit's **Results** tab.
 
-1. **Cumulative exposures** shows how many shoppers each variation has received over time. It starts as two lines climbing together.
-2. **Cumulative results** names the current **leading variation** and shows each variation's **probability to be best** and conversion rate.
-3. Wait for the first update. When it lands, the exposures chart bends: Personalized's line steepens and Bestsellers' flattens, because the bandit just handed the leader most of the traffic. On the flag's **Targeting** tab, the default rule's allocation has changed to match.
-   <!-- VERIFY: how the bandit's allocation is rendered on the Targeting tab and in the Results exposures chart; time to first reallocation with the exp profile -->
+1. **Cumulative exposures** shows how many shoppers each variation has received over time. Right now it's two lines climbing together: the bandit starts with an even split.
+2. **Cumulative results** names the current **leading variation** and shows each variation's **probability to be best** and conversion rate. Within a couple of minutes of shopper traffic, Personalized takes the lead, just as it did in the experiment.
+3. On the flag's **Targeting** tab, the default rule now shows it's allocated by the bandit.
+   <!-- VERIFY: how the bandit's allocation is rendered on the Targeting tab and in the Results exposures chart -->
 
-![Traffic shifting toward the leader](../assets/itr-07-mab-results.png)
+![The bandit's first results](../assets/itr-07-mab-results.png)
 
-Each update, the split moves again. If Bestsellers ever started winning, say the catalog changed and Personalized's picks got worse, the bandit would notice its probability to be best rising and route shoppers back without anyone filing a ticket.
+Here's the part you won't see inside this lab: the shortest update frequency is **one hour**. At the top of each hour the bandit re-reads the results and hands the leading variation a share of traffic equal to its probability to be best. Personalized's exposures line steepens, Bestsellers' flattens, and nobody touched the flag. If Bestsellers ever started winning, say the catalog changed and Personalized's picks got worse, the next update would route shoppers back without anyone filing a ticket. A bandit is a decision that keeps making itself, on a schedule you chose.
 
 # Experiment or bandit?
 
 | | A/B experiment | Multi-armed bandit |
 |---|---|---|
-| Traffic split | Fixed for the iteration | Reallocated toward the leader on a schedule |
+| Traffic split | Fixed for the iteration | Reallocated toward the leader on a schedule (hourly at the fastest) |
 | Ends when | You stop it and ship a winner | Never has to; stop it when a variation reaches ~99% |
 | Best for | Learning *whether* and *by how much*, with a clean read | Optimizing continuously when the cost of showing the loser is real |
 | What you give up | Shoppers keep seeing the loser until you act | A less precise estimate of the losing variations |

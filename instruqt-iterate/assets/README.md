@@ -16,4 +16,4 @@ relevant UI, PNG.
 | `itr-04-results.png` | 04 | The Results tab with probability to be best / beat control populated and Personalized ahead. |
 | `itr-06-ship-it.png` | 06 | The Ship it button / Stop experiment dialog with the reason filled in. |
 | `itr-07-mab-design.png` | 07 | The bandit Design tab: metric, flag, update frequency. |
-| `itr-07-mab-results.png` | 07 | The bandit Results tab after the first reallocation: exposures bending toward Personalized. |
+| `itr-07-mab-results.png` | 07 | The bandit Results tab shortly after start: leading variation and probability to be best populated (reallocation itself is hourly, so capture the first update later if convenient). |

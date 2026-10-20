@@ -49,7 +49,7 @@ For each challenge: confirm UI labels against the live UI; capture screenshots i
 
 ### 07 Multi-armed bandit
 - [ ] Hands-on MAB (Phase 0 finding): verify **Multi-armed bandits → Create → Multi-armed bandit**, the Name/Goal dialog, and the Design tab (Randomize by, Metric with environment hover, Flag, audience rule, variation served outside, %, **Update frequency**, split), then **Start → Start multi-armed bandit**.
-- [ ] **Capture the Update frequency options** and the time to the first reallocation with the `exp` profile; align `reallocationFrequencyMillis` in `terraform/lib/exp.sh` (currently 60 s) with the smallest allowed value.
+- [x] **Update frequency**: the API enforces 1–24 hours (live play 2026-10-20), so the first reallocation is at least an hour out; the assignment now says so and the solve uses 1 hour. Confirm the UI offers the same minimum and whether a presenter wants to pre-start a bandit in a second project to show a reallocated chart.
 - [ ] Confirm the exposures chart bends toward Personalized after the first update and how the allocation renders on the flag's Targeting tab.
 - [ ] Confirm starting the bandit fails (or is blocked) while the A/B iteration is still running, so the 07 prose's assumption (06 stopped it) holds; the solve chain stops it explicitly.
 - [ ] Screenshots: MAB configuration or the reallocation over time.

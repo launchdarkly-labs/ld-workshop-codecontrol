@@ -1,8 +1,8 @@
 # Solve for 07-multi-armed-bandit: a running multi-armed bandit on
 # recommendations-strategy's default rule, optimizing recs-engagement.
 # Created via the experiments API with type "mab" (Bayesian, Thompson
-# sampling, reallocating every minute — VERIFY the minimum frequency the UI
-# offers and align this value).
+# sampling, reallocating hourly — the API's minimum update frequency is one
+# hour, confirmed in the first live play).
 resource "null_resource" "create_and_start_mab" {
   triggers = {
     always = timestamp()
