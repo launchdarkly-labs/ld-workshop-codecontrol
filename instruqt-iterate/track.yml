@@ -1,7 +1,7 @@
 slug: ld-codecontrol-iterate
 id: henecylhhcz7
 version: "3"
-title: 'CodeControl: Bestsellers vs. Personalized: Let the Shop Decide'
+title: 'CodeControl 3: Bestsellers vs. Personalized: Let the Shop Decide'
 teaser: Stop guessing which version is better. Measure it with experiments, then let
   a bandit pick the winner.
 description: |-
@@ -37,5 +37,5 @@ lab_config:
   hideStopButton: false
   default_layout: AssignmentRight
   default_layout_sidebar_size: 25
-checksum: "3487119464166268404"
+checksum: "10942691385820569946"
 enhanced_loading: false

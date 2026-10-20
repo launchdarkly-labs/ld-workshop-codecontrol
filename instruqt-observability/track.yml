@@ -1,7 +1,7 @@
 slug: ld-codecontrol-observability
 id: xaf0whhzwmvp
 version: "3"
-title: 'CodeControl: The Carousel That Broke Production'
+title: 'CodeControl 2: The Carousel That Broke Production'
 teaser: Release-scoped observability. See the error, replay the session, guard on
   the real signal, and let the system heal itself.
 description: |-
@@ -38,5 +38,5 @@ lab_config:
   hideStopButton: false
   default_layout: AssignmentRight
   default_layout_sidebar_size: 25
-checksum: "7847448646862546172"
+checksum: "5238763190092924937"
 enhanced_loading: false
