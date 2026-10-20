@@ -1,6 +1,6 @@
 slug: ld-codecontrol-release
 id: ydhzdlvet14f
-title: 'Shipping Otto: From First Flag to Guarded Release'
+title: 'CodeControl: Shipping Otto: From First Flag to Guarded Release'
 teaser: Feature-flag fundamentals through a guarded release with automatic rollback.
 description: |-
   ToggleWear is live, and you're the developer on the hook for shipping
