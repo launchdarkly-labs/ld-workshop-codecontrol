@@ -1,24 +1,31 @@
 ---
 slug: errors-in-context
+id: gzhlnza1cm3q
 type: challenge
 title: Errors in Context
-teaser: See the error attributed to the variation that caused it, then replay the session where it happened.
+teaser: See the error attributed to the variation that caused it, then replay the
+  session where it happened.
 notes:
 - type: text
-  contents: An error count is a number. An error tied to a flag variation, with a replay of the shopper who hit it, is a diagnosis.
+  contents: An error count is a number. An error tied to a flag variation, with a
+    replay of the shopper who hit it, is a diagnosis.
 tabs:
-- title: LaunchDarkly
+- id: dipiqsizwqba
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: mqruedzutuur
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: ygxwpyxjtqzs
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: r5yd6guoym5d
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

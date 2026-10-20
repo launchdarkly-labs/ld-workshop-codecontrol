@@ -1,24 +1,31 @@
 ---
 slug: design-an-experiment
+id: p9vgf1rsf7q2
 type: challenge
 title: Design an Experiment
-teaser: "Set up an A/B experiment: Bestsellers vs Personalized, a hypothesis, and a primary metric."
+teaser: 'Set up an A/B experiment: Bestsellers vs Personalized, a hypothesis, and
+  a primary metric.'
 notes:
 - type: text
-  contents: "You have two strategies and a metric. Now you'll write down what you expect to happen and build the experiment that will test it."
+  contents: You have two strategies and a metric. Now you'll write down what you expect
+    to happen and build the experiment that will test it.
 tabs:
-- title: LaunchDarkly
+- id: jorxlvjronze
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: 4gjxrm8u5m4t
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: mmldsucxvgyz
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: 23xcvdy0psdc
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

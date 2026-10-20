@@ -1,24 +1,31 @@
 ---
 slug: release-monitoring
+id: fecfhr5zzhu7
 type: challenge
 title: Release Monitoring
-teaser: Read release health per variation with the metrics LaunchDarkly generated from your instrumentation.
+teaser: Read release health per variation with the metrics LaunchDarkly generated
+  from your instrumentation.
 notes:
 - type: text
-  contents: Your instrumentation is already producing metrics. In this challenge you'll find them and read what they say about each variation.
+  contents: Your instrumentation is already producing metrics. In this challenge you'll
+    find them and read what they say about each variation.
 tabs:
-- title: LaunchDarkly
+- id: 1fq6qhxrhbjx
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: nxzvgqz6keb4
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: xiskwdgrvpzr
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: bvxq7szgbj4k
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

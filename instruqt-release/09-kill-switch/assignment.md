@@ -1,26 +1,31 @@
 ---
 slug: kill-switch
+id: xlttf1yjos5j
 type: challenge
 title: The Kill Switch
 teaser: Turn a misbehaving feature off in seconds.
 notes:
 - type: text
-  contents: Sometimes you don't want a ramp or a guard. Something is wrong
-    right now and you want it off. That's the kill switch, and it's the
-    simplest move in the whole workshop.
+  contents: Sometimes you don't want a ramp or a guard. Something is wrong right now
+    and you want it off. That's the kill switch, and it's the simplest move in the
+    whole workshop.
 tabs:
-- title: LaunchDarkly
+- id: imtuzvawoxxq
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: u5sbmdxfhdv2
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: ovbfoo2kc4be
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: mybog4gzx8io
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

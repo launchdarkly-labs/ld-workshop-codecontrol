@@ -1,26 +1,31 @@
 ---
 slug: your-first-flag
+id: yiouaqfob8qe
 type: challenge
 title: Your First Feature Flag
 teaser: Create the flag that will control Otto's release.
 notes:
 - type: text
-  contents: ToggleWear wants a chat widget named Otto, but nobody wants to
-    ship him to everyone at once. Step one is creating the feature flag that
-    will control his release.
+  contents: ToggleWear wants a chat widget named Otto, but nobody wants to ship him
+    to everyone at once. Step one is creating the feature flag that will control his
+    release.
 tabs:
-- title: LaunchDarkly
+- id: lqdgsg7riify
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: p7rzdy8fnysw
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: jbfkb3tgpurw
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: tqqjp8gervik
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

@@ -1,27 +1,31 @@
 ---
 slug: guarded-release
+id: tyoqkk8q5tzi
 type: challenge
 title: Guarded Release
 teaser: Ship Chatty Otto behind a guard that rolls back if things go wrong.
 notes:
 - type: text
-  contents: There's a new, more talkative version of Otto ready to ship.
-    Instead of hoping it's fine, you'll release it behind a guard that
-    watches a real metric and rolls back automatically if the new Otto makes
-    things worse.
+  contents: There's a new, more talkative version of Otto ready to ship. Instead of
+    hoping it's fine, you'll release it behind a guard that watches a real metric
+    and rolls back automatically if the new Otto makes things worse.
 tabs:
-- title: LaunchDarkly
+- id: u3mmmlcywfox
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: ljxkvcp3kkeb
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: leoezmxb29yf
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: dj31swvnsn57
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

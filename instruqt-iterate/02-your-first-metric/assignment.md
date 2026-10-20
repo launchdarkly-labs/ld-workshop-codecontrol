@@ -1,24 +1,30 @@
 ---
 slug: your-first-metric
+id: mxmgmmts8olx
 type: challenge
 title: Your First Metric
-teaser: "Create an engagement metric and wire the event that feeds it."
+teaser: Create an engagement metric and wire the event that feeds it.
 notes:
 - type: text
-  contents: "An experiment needs something to measure. In this challenge you'll define what \"better\" means for the carousel and give the app a way to report it."
+  contents: An experiment needs something to measure. In this challenge you'll define
+    what "better" means for the carousel and give the app a way to report it.
 tabs:
-- title: LaunchDarkly
+- id: v6td6lwop5je
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: rtafysfyxtqz
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: 5wx0v34ffgxs
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: pcwi93q1nd1x
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

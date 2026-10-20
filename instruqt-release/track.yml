@@ -1,4 +1,5 @@
 slug: ld-codecontrol-release
+id: ydhzdlvet14f
 title: 'LaunchDarkly CodeControl: Release'
 teaser: Feature-flag fundamentals through a guarded release with automatic rollback.
 description: |-
@@ -11,8 +12,8 @@ description: |-
   leave knowing how to release anything without holding your breath.
 icon: https://launchdarkly.com/favicon-dark-mode.png
 tags:
-- codecontrol
 - release
+- codecontrol
 - feature-flags
 owner: launchdarkly
 developers:
@@ -21,8 +22,8 @@ show_timer: true
 idle_timeout: 1200
 timelimit: 7200
 lab_config:
-  sidebar_enabled: true
   extend_ttl: 3600
+  sidebar_enabled: true
   feedback_recap_enabled: true
   feedback_tab_enabled: false
   loadingMessages: true
@@ -32,4 +33,5 @@ lab_config:
   hideStopButton: false
   default_layout: AssignmentRight
   default_layout_sidebar_size: 25
+checksum: "17249114259464002735"
 enhanced_loading: false

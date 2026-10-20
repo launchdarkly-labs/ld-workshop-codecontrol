@@ -1,26 +1,31 @@
 ---
 slug: segments
+id: yym7qpy0oekj
 type: challenge
 title: Segments
 teaser: Make your beta audience reusable.
 notes:
 - type: text
-  contents: One targeting rule for one flag works, but your beta testers will
-    be trying more than Otto. Segments make that audience something you
-    define once and reuse everywhere.
+  contents: One targeting rule for one flag works, but your beta testers will be trying
+    more than Otto. Segments make that audience something you define once and reuse
+    everywhere.
 tabs:
-- title: LaunchDarkly
+- id: xtxvmpw0dry5
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: u0ijkkgdtxjw
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: u75hpwlp0igd
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: xulh7mfhfn3k
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

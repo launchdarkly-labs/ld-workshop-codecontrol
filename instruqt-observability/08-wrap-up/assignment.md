@@ -1,17 +1,22 @@
 ---
 slug: wrap-up
+id: degylj4g3vqx
 type: quiz
 title: Wrap-Up
 teaser: What you observed, what healed itself, and what's next.
 notes:
 - type: text
-  contents: The carousel is live, observable, guarded, and self-healing. One
-    last question, then a look at where the series goes next.
+  contents: The carousel is live, observable, guarded, and self-healing. One last
+    question, then a look at where the series goes next.
 answers:
-- "They're the same feature; \"adaptive trigger\" is the name for a guarded rollout once it reaches 100%."
-- "A guarded rollout watches a metric while a new variation ramps and rolls the release back if it regresses; an adaptive trigger keeps watching a metric after release, at any percentage, and switches the variation when the metric crosses a threshold you set."
-- "A guarded rollout needs the observability plugins and an adaptive trigger doesn't."
-- "An adaptive trigger can only turn a flag off, while a guarded rollout can switch between any two variations."
+- They're the same feature; "adaptive trigger" is the name for a guarded rollout once
+  it reaches 100%.
+- A guarded rollout watches a metric while a variation ramps and rolls the release
+  back on a regression; an adaptive trigger keeps watching after release and switches
+  the variation when the metric crosses your threshold.
+- A guarded rollout needs the observability plugins and an adaptive trigger doesn't.
+- An adaptive trigger can only turn a flag off, while a guarded rollout can switch
+  between any two variations.
 solution:
 - 1
 difficulty: basic

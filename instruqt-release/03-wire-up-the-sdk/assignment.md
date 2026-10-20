@@ -1,26 +1,31 @@
 ---
 slug: wire-up-the-sdk
+id: tle8qgwqzptx
 type: challenge
 title: Wire Up the SDK
 teaser: Connect ToggleWear to LaunchDarkly and bring Otto to the page.
 notes:
 - type: text
-  contents: A flag on its own doesn't do anything. In this challenge you'll
-    wire the LaunchDarkly SDKs into ToggleWear so your new flag actually
-    controls whether Otto appears.
+  contents: A flag on its own doesn't do anything. In this challenge you'll wire the
+    LaunchDarkly SDKs into ToggleWear so your new flag actually controls whether Otto
+    appears.
 tabs:
-- title: LaunchDarkly
+- id: rrdnzw8peycp
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: omzjmldhhlyx
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: fn1vwwr2fnj4
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: zzwtmxhljmus
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

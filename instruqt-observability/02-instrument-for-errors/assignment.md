@@ -1,24 +1,32 @@
 ---
 slug: instrument-for-errors
+id: bwxayav6fu2r
 type: challenge
 title: Instrument for Errors
-teaser: Wire the observability plugins so runtime errors and shopper sessions land in LaunchDarkly.
+teaser: Wire the observability plugins so runtime errors and shopper sessions land
+  in LaunchDarkly.
 notes:
 - type: text
-  contents: The personalized recommendations strategy has a bug nobody has noticed yet. Before you ship it, you'll give the app a way to tell you when something goes wrong.
+  contents: The personalized recommendations strategy has a bug nobody has noticed
+    yet. Before you ship it, you'll give the app a way to tell you when something
+    goes wrong.
 tabs:
-- title: LaunchDarkly
+- id: 4dk0wyjmx5yb
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: rdakkcm2yiii
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: mivi4jvr1j3u
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: r1mfnlsrlvd2
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

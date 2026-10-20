@@ -1,24 +1,31 @@
 ---
 slug: welcome-recap
+id: gmjglxulhnsr
 type: challenge
 title: Welcome Back to ToggleWear
-teaser: "The carousel works. But is the new version actually better? Time to find out."
+teaser: The carousel works. But is the new version actually better? Time to find out.
 notes:
 - type: text
-  contents: "Whether you just finished the Observability track or are starting here, this challenge re-establishes where ToggleWear stands and what question this track answers."
+  contents: Whether you just finished the Observability track or are starting here,
+    this challenge re-establishes where ToggleWear stands and what question this track
+    answers.
 tabs:
-- title: LaunchDarkly
+- id: h4x9dbic2uh7
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: 2rdi4jquwoni
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: affog0amr3eb
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: m8cihyhubzdh
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

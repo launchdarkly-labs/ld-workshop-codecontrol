@@ -1,24 +1,31 @@
 ---
 slug: welcome-recap
+id: bzwwgk06cm3u
 type: challenge
 title: Welcome Back to ToggleWear
-teaser: Otto is live. Now the shop wants recommendations, and you want to see what breaks.
+teaser: Otto is live. Now the shop wants recommendations, and you want to see what
+  breaks.
 notes:
 - type: text
-  contents: Whether you just finished the Release track or are starting here, this challenge re-establishes where ToggleWear stands and what you're about to ship.
+  contents: Whether you just finished the Release track or are starting here, this
+    challenge re-establishes where ToggleWear stands and what you're about to ship.
 tabs:
-- title: LaunchDarkly
+- id: xxiincx10lt3
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: hxegbqyu6sgi
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: jiaruzyw5brn
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: 3b6fwhqr2thx
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

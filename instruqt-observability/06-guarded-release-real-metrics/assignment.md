@@ -1,24 +1,31 @@
 ---
 slug: guarded-release-real-metrics
+id: fmldohbizyei
 type: challenge
 title: Guarded Release on Real Metrics
-teaser: Guard the personalized rollout on the real error signal you built, and watch it roll back.
+teaser: Guard the personalized rollout on the real error signal you built, and watch
+  it roll back.
 notes:
 - type: text
-  contents: "Same guard as the Release track. Different signal: this time it watches an error metric produced by your own instrumentation."
+  contents: 'Same guard as the Release track. Different signal: this time it watches
+    an error metric produced by your own instrumentation.'
 tabs:
-- title: LaunchDarkly
+- id: cw9mwjx1onry
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: 8y4ncwapppr2
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: rqnr6a628pon
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: bcjbmhsapsyo
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

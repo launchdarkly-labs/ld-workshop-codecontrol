@@ -1,6 +1,9 @@
 slug: ld-codecontrol-iterate
+id: henecylhhcz7
+version: "3"
 title: 'LaunchDarkly CodeControl: Iterate'
-teaser: Stop guessing which version is better. Measure it with experiments, then let a bandit pick the winner.
+teaser: Stop guessing which version is better. Measure it with experiments, then let
+  a bandit pick the winner.
 description: |-
   ToggleWear's "Recommended for You" carousel works, and there are two ways
   to fill it: the safe Bestsellers strategy and the shiny Personalized one.
@@ -12,9 +15,9 @@ description: |-
   knowing how to let real data drive product decisions.
 icon: https://launchdarkly.com/favicon-dark-mode.png
 tags:
-- codecontrol
-- iterate
 - experimentation
+- iterate
+- codecontrol
 owner: launchdarkly
 developers:
 - kcochran@launchdarkly.com
@@ -22,8 +25,8 @@ show_timer: true
 idle_timeout: 1200
 timelimit: 7200
 lab_config:
-  sidebar_enabled: true
   extend_ttl: 3600
+  sidebar_enabled: true
   feedback_recap_enabled: true
   feedback_tab_enabled: false
   loadingMessages: true
@@ -33,5 +36,5 @@ lab_config:
   hideStopButton: false
   default_layout: AssignmentRight
   default_layout_sidebar_size: 25
+checksum: "4800350432464426757"
 enhanced_loading: false
-version: "3"

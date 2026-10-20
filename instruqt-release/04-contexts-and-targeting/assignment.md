@@ -1,26 +1,31 @@
 ---
 slug: contexts-and-targeting
+id: yfyaulwszfnq
 type: challenge
 title: Contexts and Targeting
 teaser: Show Otto to beta users first.
 notes:
 - type: text
-  contents: Shipping to everyone at once is what we're trying to avoid.
-    You'll tell LaunchDarkly who each visitor is, then write a targeting rule
-    so only beta users meet Otto first.
+  contents: Shipping to everyone at once is what we're trying to avoid. You'll tell
+    LaunchDarkly who each visitor is, then write a targeting rule so only beta users
+    meet Otto first.
 tabs:
-- title: LaunchDarkly
+- id: gavfrcoijwrg
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: qhcq0qdvnpc8
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: zfi4soesfy0t
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: e2xn1tx36wdk
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

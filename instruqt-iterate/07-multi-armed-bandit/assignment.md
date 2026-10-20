@@ -1,24 +1,31 @@
 ---
 slug: multi-armed-bandit
+id: xvxx9xdosxgx
 type: challenge
 title: Multi-Armed Bandit
-teaser: "Hand the decision to a bandit that routes traffic to whichever strategy is winning."
+teaser: Hand the decision to a bandit that routes traffic to whichever strategy is
+  winning.
 notes:
 - type: text
-  contents: "An experiment gives you one answer at one moment. A multi-armed bandit keeps answering, shifting traffic toward the leader as the data changes."
+  contents: An experiment gives you one answer at one moment. A multi-armed bandit
+    keeps answering, shifting traffic toward the leader as the data changes.
 tabs:
-- title: LaunchDarkly
+- id: ihfir8mo7kpt
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: lyyfdekvltp7
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: folwtrxp2tte
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: ucdmmu9uoplw
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

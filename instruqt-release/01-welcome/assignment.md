@@ -1,26 +1,30 @@
 ---
 slug: welcome
+id: mhhsa33wv9ra
 type: challenge
 title: Welcome to ToggleWear
 teaser: Meet the shop, meet Otto, and see what shipping safely looks like.
 notes:
 - type: text
-  contents: ToggleWear is live and you're its newest developer. Before we ship
-    anything, take a look around the shop and the LaunchDarkly project you'll
-    be working in.
+  contents: ToggleWear is live and you're its newest developer. Before we ship anything,
+    take a look around the shop and the LaunchDarkly project you'll be working in.
 tabs:
-- title: LaunchDarkly
+- id: 5ukvg92qd0le
+  title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- title: ToggleWear
+- id: wksyo40lvgln
+  title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- title: Code Editor
+- id: pnumxeyfdqa4
+  title: Code Editor
   type: service
   hostname: workstation
   port: 8080
-- title: Shell
+- id: ajpxv3ppb3vm
+  title: Shell
   type: terminal
   hostname: workstation
   workdir: /opt/ld/codecontrol/app

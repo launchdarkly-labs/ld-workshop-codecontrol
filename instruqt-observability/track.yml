@@ -1,6 +1,9 @@
 slug: ld-codecontrol-observability
+id: xaf0whhzwmvp
+version: "3"
 title: 'LaunchDarkly CodeControl: Observability'
-teaser: Release-scoped observability. See the error, replay the session, guard on the real signal, and let the system heal itself.
+teaser: Release-scoped observability. See the error, replay the session, guard on
+  the real signal, and let the system heal itself.
 description: |-
   Otto shipped. Now ToggleWear wants a "Recommended for You" carousel, and
   the new personalized version is about to start failing in production on
@@ -14,8 +17,8 @@ description: |-
 icon: https://launchdarkly.com/favicon-dark-mode.png
 tags:
 - codecontrol
-- observability
 - feature-flags
+- observability
 owner: launchdarkly
 developers:
 - kcochran@launchdarkly.com
@@ -23,8 +26,8 @@ show_timer: true
 idle_timeout: 1200
 timelimit: 7200
 lab_config:
-  sidebar_enabled: true
   extend_ttl: 3600
+  sidebar_enabled: true
   feedback_recap_enabled: true
   feedback_tab_enabled: false
   loadingMessages: true
@@ -34,5 +37,5 @@ lab_config:
   hideStopButton: false
   default_layout: AssignmentRight
   default_layout_sidebar_size: 25
+checksum: "16854266406612759167"
 enhanced_loading: false
-version: "3"
