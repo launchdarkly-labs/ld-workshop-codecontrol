@@ -5,6 +5,7 @@
 # reallocate on. Does NOT create the bandit.
 #
 set -euo pipefail
+source /opt/ld/ld.env
 TF=/opt/ld/codecontrol/terraform
 cd "$TF/iterate-07"
 echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars

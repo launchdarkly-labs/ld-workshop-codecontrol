@@ -9,6 +9,9 @@
 # flags-list `guardedRollout:` filter.
 #
 
+# Lifecycle scripts don't inherit ~/.profile; the track setup wrote the keys here.
+source /opt/ld/ld.env
+
 STATUS=$(curl -s -o /tmp/ck-obs06.json -w '%{http_code}' -X GET \
   'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'?filter=guardedRollout:any' \
   -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)

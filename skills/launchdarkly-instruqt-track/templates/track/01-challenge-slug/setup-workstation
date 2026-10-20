@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# Challenge setup: create whatever this challenge needs in the learner's
+# LaunchDarkly project (flags, segments, metrics). Idempotent: a 409 means it
+# already exists (e.g. the learner skipped here via solve scripts).
+#
+set -euo pipefail
+source /opt/ld/ld.env
+LD_API="https://app.launchdarkly.com/api/v2"
+AUTH=(-H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}" -H "Content-Type: application/json")
+
+create_bool_flag() {  # key, name, description
+  local code
+  code=$(curl -s -o /tmp/ld-flag.json -w '%{http_code}' -X POST "${LD_API}/flags/${LD_PROJECT_KEY}" "${AUTH[@]}" \
+    -d "$(jq -n --arg k "$1" --arg n "$2" --arg d "$3" '{
+      key: $k, name: $n, description: $d,
+      variations: [{value: true, name: "On"}, {value: false, name: "Off"}],
+      defaults: {onVariation: 0, offVariation: 1},
+      clientSideAvailability: {usingEnvironmentId: true, usingMobileKey: false},
+      tags: ["workshop"]
+    }')")
+  case "$code" in
+    201|409) echo "flag $1: $code" ;;
+    *) echo "flag $1 failed: $code"; cat /tmp/ld-flag.json; exit 1 ;;
+  esac
+}
+
+create_bool_flag "__FLAG_KEY__" "__FLAG_NAME__" "Created by challenge setup."
+
+exit 0

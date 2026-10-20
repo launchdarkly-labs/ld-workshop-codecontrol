@@ -1,6 +1,5 @@
 ---
 slug: quiz-release-health
-id: 438oiub1cs3a
 type: quiz
 title: 'Quiz: Release Health'
 teaser: Check your understanding of error attribution and release health.
@@ -9,13 +8,10 @@ notes:
   contents: Quick checkpoint before the guarded release. One question on how
     LaunchDarkly knew which variation the errors belonged to.
 answers:
-- The error message contained the flag key, so LaunchDarkly matched it by text.
-- The server plugin recorded the flag evaluation and the exception on the same
-  request trace, so LaunchDarkly knows which variation that shopper was served
-  when the request failed.
-- LaunchDarkly attributes every error to whichever variation the default rule
-  was serving at the time the error arrived.
-- You filtered the Errors page by the time window of the release.
+- "The error message contained the flag key, so LaunchDarkly matched it by text."
+- "The server plugin recorded the flag evaluation and the exception on the same request trace, so LaunchDarkly knows which variation that shopper was served when the request failed."
+- "LaunchDarkly attributes every error to whichever variation the default rule was serving at the time the error arrived."
+- "You filtered the Errors page by the time window of the release."
 solution:
 - 1
 difficulty: basic

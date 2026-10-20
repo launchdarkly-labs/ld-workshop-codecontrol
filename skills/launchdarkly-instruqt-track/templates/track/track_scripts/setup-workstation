@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# Track setup: provisions a dedicated LaunchDarkly project for this sandbox and
+# exposes its keys to the shell, lifecycle scripts, assignments, and the demo app.
+#
+set -euo pipefail
+
+until [ -f /opt/instruqt/bootstrap/host-bootstrap-completed ]; do
+    echo "Waiting for instruqt bootstrap to complete"
+    sleep 1
+done
+
+# ---- REQUIRED: provision the learner's LaunchDarkly project ------------------
+cd /opt/ld/ld-workshop-participant
+echo "sandbox_id = \"${_SANDBOX_ID}\"" > terraform.tfvars
+terraform apply -auto-approve
+
+export LD_PROJECT_KEY="$(terraform output -json | jq -r '.students.value[0].project_key')"
+export LD_ENV_KEY="test"
+
+# One API call returns both the client-side ID (_id) and the server SDK key (apiKey).
+ENV_JSON="$(curl -fsS \
+  "https://app.launchdarkly.com/api/v2/projects/${LD_PROJECT_KEY}/environments/${LD_ENV_KEY}" \
+  -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}")"
+export LD_CLIENT_KEY="$(echo "$ENV_JSON" | jq -r '._id')"
+export LD_SDK_KEY="$(echo "$ENV_JSON" | jq -r '.apiKey')"
+
+# ---- Expose keys to interactive shells --------------------------------------
+for f in ~/.profile ~/.bashrc; do
+  {
+    echo ""
+    echo "export LD_PROJECT_KEY=\"${LD_PROJECT_KEY}\""
+    echo "export LD_ENV_KEY=\"${LD_ENV_KEY}\""
+    echo "export LD_CLIENT_KEY=\"${LD_CLIENT_KEY}\""
+    echo "export LD_SDK_KEY=\"${LD_SDK_KEY}\""
+  } >> "$f"
+done
+
+# ---- Expose keys to lifecycle scripts and the demo app's systemd unit --------
+# Challenge scripts: `source /opt/ld/ld.env`. The app unit: EnvironmentFile=-/opt/ld/ld.env
+cat > /opt/ld/ld.env <<ENV
+LD_PROJECT_KEY=${LD_PROJECT_KEY}
+LD_ENV_KEY=${LD_ENV_KEY}
+LD_CLIENT_KEY=${LD_CLIENT_KEY}
+LD_SDK_KEY=${LD_SDK_KEY}
+ENV
+chmod 600 /opt/ld/ld.env
+
+# ---- Expose keys to assignment markdown via [[ Instruqt-Var key="LD_PROJECT_KEY" hostname="workstation" ]]
+agent variable set LD_PROJECT_KEY "${LD_PROJECT_KEY}" || true
+agent variable set LD_CLIENT_KEY "${LD_CLIENT_KEY}" || true
+
+# ---- Start the demo app (no-op on images that don't ship one) ----------------
+if systemctl list-unit-files | grep -q '^ld-app.service'; then
+  systemctl restart ld-app
+fi
+
+exit 0

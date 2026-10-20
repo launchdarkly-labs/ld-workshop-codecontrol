@@ -11,7 +11,8 @@ This checklist is the verification plan to run **after** Claude Code authors the
 - [ ] **Live-fire end-to-end smoke test** against a fresh sandbox: bootstrap → click through every challenge → solve every challenge → confirm every check passes. Time each challenge against the ~2h presenter / ~1h self-paced budgets.
 - [ ] **Confirm challenges are numbered from `01`** and that Instruqt renders `01-welcome` (not skipped as a `00` would be).
 - [ ] **Track-level `setup-workstation` timing** — bootstrap the project, mint the scoped token, write `.env`, restart the service. Should be well under 60s.
-- [ ] **Confirm the single secret model** — only `LAUNCHDARKLY_ACCESS_TOKEN` is required; no AWS/Bedrock secrets anywhere in `config.yml`.
+- [ ] **Confirm the skill contract** — `config.yml` declares the four secrets (`AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `LAUNCHDARKLY_ACCESS_TOKEN`) and the skill's Lambda URL; the `launchdarkly` tab actually signs the learner into their project (this depends on the participant Terraform's magic-login record). **Confirm which Lambda URL is live** — the skill's (`l5vv6unuu4…`, used here) vs. the older one in the reference tracks (`i3vcudz5…`).
+- [ ] **Run `instruqt track validate` then `instruqt track push`** from each track directory; the first push assigns the `id:` fields — commit them afterward.
 - [ ] **VM image bake** from `vm-image/` inputs produces a working image; confirm the app starts on boot and serves on port 3000.
 - [ ] **Confirm the mock Otto** returns on-brand canned replies and never attempts a model call.
 - [ ] **Confirm client-side SDK availability defaults on** for flags created in the sandbox project (docs: accounts created after 2025-10-21 default it on). If not, challenge 02/03 prose must teach the "SDKs using Client-side ID" setting — note which label the create-flag dialog actually shows.

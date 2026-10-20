@@ -1,6 +1,5 @@
 ---
 slug: promote-the-winner
-id: vg4fkxmlapxi
 type: challenge
 title: Promote the Winner
 teaser: "Ship the winning strategy to everyone."
@@ -8,20 +7,21 @@ notes:
 - type: text
   contents: "The experiment has an answer. In this challenge you'll act on it: stop the iteration, name the winner, and serve it to every shopper."
 tabs:
-- id: bud4dyl2io68
-  title: LaunchDarkly
+- title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- id: xvni4eghg6nb
-  title: ToggleWear
+- title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- id: 1boln2ufj2bf
-  title: Code Editor
+- title: Code Editor
   type: service
   hostname: workstation
   port: 8080
+- title: Shell
+  type: terminal
+  hostname: workstation
+  workdir: /opt/ld/codecontrol/app
 difficulty: basic
 timelimit: 900
 enhanced_loading: null

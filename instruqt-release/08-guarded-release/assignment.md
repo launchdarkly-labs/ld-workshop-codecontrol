@@ -1,6 +1,5 @@
 ---
 slug: guarded-release
-id: udtkwl3na891
 type: challenge
 title: Guarded Release
 teaser: Ship Chatty Otto behind a guard that rolls back if things go wrong.
@@ -11,20 +10,21 @@ notes:
     watches a real metric and rolls back automatically if the new Otto makes
     things worse.
 tabs:
-- id: oc6jh1lmekdr
-  title: LaunchDarkly
+- title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- id: fn1jip1z4snj
-  title: ToggleWear
+- title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- id: iizsuqq9u8s3
-  title: Code Editor
+- title: Code Editor
   type: service
   hostname: workstation
   port: 8080
+- title: Shell
+  type: terminal
+  hostname: workstation
+  workdir: /opt/ld/codecontrol/app
 difficulty: basic
 timelimit: 1200
 enhanced_loading: null

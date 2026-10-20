@@ -1,6 +1,5 @@
 ---
 slug: auto-remediation
-id: zxwy92ntpafg
 type: challenge
 title: Auto-Remediation
 teaser: Set up an adaptive trigger so a detected regression heals itself.
@@ -8,20 +7,21 @@ notes:
 - type: text
   contents: A guarded release protects you while you ramp. This challenge protects you after. When the error signal goes bad in production, LaunchDarkly flips the flag back for you.
 tabs:
-- id: 2h9d8y735j7o
-  title: LaunchDarkly
+- title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- id: b5mzn2ve4tsc
-  title: ToggleWear
+- title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- id: pp8vnknvseji
-  title: Code Editor
+- title: Code Editor
   type: service
   hostname: workstation
   port: 8080
+- title: Shell
+  type: terminal
+  hostname: workstation
+  workdir: /opt/ld/codecontrol/app
 difficulty: basic
 timelimit: 1200
 enhanced_loading: null

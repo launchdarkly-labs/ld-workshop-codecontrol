@@ -4,6 +4,7 @@
 # flowing so a learner whose results haven't converged yet gets there.
 #
 set -euo pipefail
+source /opt/ld/ld.env
 TF=/opt/ld/codecontrol/terraform
 cd "$TF/iterate-06"
 echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars

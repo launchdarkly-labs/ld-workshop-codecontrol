@@ -3,6 +3,9 @@
 # Verify an experiment exists on recommendations-strategy that uses the
 # engagement metric. Started or not doesn't matter here (04 starts it).
 #
+# Lifecycle scripts don't inherit ~/.profile; the track setup wrote the keys here.
+source /opt/ld/ld.env
+
 TF=/opt/ld/codecontrol/terraform
 METRIC=$(bash "$TF/lib/exp.sh" metric-key "$LD_PROJECT_KEY" recs-engagement 2>/dev/null || true)
 if [ -z "$METRIC" ]; then

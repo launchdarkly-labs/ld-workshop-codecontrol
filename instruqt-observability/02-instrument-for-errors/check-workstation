@@ -5,6 +5,9 @@
 # something to observe).
 #
 
+# Lifecycle scripts don't inherit ~/.profile; the track setup wrote the keys here.
+source /opt/ld/ld.env
+
 APP_DIR=/opt/ld/codecontrol/app
 
 if ! grep -q 'ObservabilityPlugin(' "$APP_DIR/server.py"; then

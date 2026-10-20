@@ -1,6 +1,5 @@
 ---
 slug: wrap-up
-id: 8xtd6hcczk47
 type: quiz
 title: Wrap-Up
 teaser: What you shipped, what you learned, and what's next.
@@ -9,15 +8,10 @@ notes:
   contents: Otto is live, guarded, and one toggle away from off. One last
     question, then a look at where the series goes next.
 answers:
-- A progressive rollout ramps in smaller percentage steps, while a guarded
-  rollout ramps all at once.
-- They're the same mechanism — "guarded" is just the name for a progressive
-  rollout on a paid plan.
-- A progressive rollout ramps traffic on a schedule but nothing watches it; a
-  guarded rollout also monitors a metric and can automatically roll back when
-  the new variation regresses.
-- A guarded rollout requires the kill switch to be configured first, and a
-  progressive rollout doesn't.
+- "A progressive rollout ramps in smaller percentage steps, while a guarded rollout ramps all at once."
+- "They're the same mechanism — \"guarded\" is just the name for a progressive rollout on a paid plan."
+- "A progressive rollout ramps traffic on a schedule but nothing watches it; a guarded rollout also monitors a metric and can automatically roll back when the new variation regresses."
+- "A guarded rollout requires the kill switch to be configured first, and a progressive rollout doesn't."
 solution:
 - 2
 difficulty: basic

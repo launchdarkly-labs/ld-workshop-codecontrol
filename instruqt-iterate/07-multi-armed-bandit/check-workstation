@@ -3,6 +3,9 @@
 # Verify a multi-armed bandit (experiment type "mab") on
 # recommendations-strategy has a running iteration.
 #
+# Lifecycle scripts don't inherit ~/.profile; the track setup wrote the keys here.
+source /opt/ld/ld.env
+
 STATUS=$(curl -s -o /tmp/ck-itr07.json -w '%{http_code}' -X GET \
   "https://app.launchdarkly.com/api/v2/projects/$LD_PROJECT_KEY/environments/test/experiments?filter=flagKey:recommendations-strategy&expand=currentIteration" \
   -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)

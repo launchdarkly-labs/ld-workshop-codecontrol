@@ -9,6 +9,9 @@
 # register under the flags-list `guardedRollout:` filter.
 #
 
+# Lifecycle scripts don't inherit ~/.profile; the track setup wrote the keys here.
+source /opt/ld/ld.env
+
 ld_get() {
   # ld_get <output-file> <url> — curl with status capture; fails the check
   # with a retry message on transport/auth errors (404 passes through).

@@ -3,6 +3,9 @@
 # Verify release-otto's targeting is off — the kill switch has been pulled.
 #
 
+# Lifecycle scripts don't inherit ~/.profile; the track setup wrote the keys here.
+source /opt/ld/ld.env
+
 STATUS=$(curl -s -o /tmp/ck-rel09.json -w '%{http_code}' -X GET \
   'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'/release-otto' \
   -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)

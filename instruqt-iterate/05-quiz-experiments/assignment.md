@@ -1,6 +1,5 @@
 ---
 slug: quiz-experiments
-id: yeb5j49oe6qv
 type: quiz
 title: 'Quiz: Experiments'
 teaser: "Check your understanding of experiment design and reading results."
@@ -8,10 +7,10 @@ notes:
 - type: text
   contents: "Quick checkpoint before you ship the winner. One question on what the results table is actually telling you."
 answers:
-- Personalized had more total clicks than Bestsellers.
-- Given the data so far, there is at least a 90% probability that Personalized's share of shoppers who click a recommendation is higher than Bestsellers' share, so the difference is unlikely to be noise.
-- 90% of shoppers who saw Personalized clicked a recommendation.
-- The experiment has reached 90% of its planned sample size and can be stopped.
+- "Personalized had more total clicks than Bestsellers."
+- "Given the data so far, there is at least a 90% probability that Personalized's share of shoppers who click a recommendation is higher than Bestsellers' share, so the difference is unlikely to be noise."
+- "90% of shoppers who saw Personalized clicked a recommendation."
+- "The experiment has reached 90% of its planned sample size and can be stopped."
 solution:
 - 1
 difficulty: basic

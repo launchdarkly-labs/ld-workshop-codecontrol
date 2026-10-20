@@ -6,6 +6,7 @@
 # once personalized is live. Does NOT create the trigger.
 #
 set -euo pipefail
+source /opt/ld/ld.env
 
 TF=/opt/ld/codecontrol/terraform
 

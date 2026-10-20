@@ -4,6 +4,7 @@
 # it (solve-workstation does that if the learner skips).
 #
 set -euo pipefail
+source /opt/ld/ld.env
 
 cd /opt/ld/codecontrol/terraform/release-09
 echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars

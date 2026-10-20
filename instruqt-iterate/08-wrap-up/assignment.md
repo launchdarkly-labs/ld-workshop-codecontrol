@@ -1,6 +1,5 @@
 ---
 slug: wrap-up
-id: l3tela4dizem
 type: quiz
 title: Wrap-Up
 teaser: "The whole CodeControl journey: release, observe, iterate."
@@ -8,10 +7,10 @@ notes:
 - type: text
   contents: "Three tracks, one shop, one flag doing most of the work. One last question, then where to go from here."
 answers:
-- A guarded rollout and a multi-armed bandit are the same mechanism with different names.
-- A guarded rollout protects a release while it ramps by rolling back on a regression; an adaptive trigger protects a feature after release by switching variations on a threshold; an experiment or bandit isn't a safety net at all but an optimization loop that picks the better variation from data.
-- Experiments replace guarded rollouts: once you measure engagement you no longer need to watch for errors.
-- All three react at the same timescale and differ only in which metric they watch.
+- "A guarded rollout and a multi-armed bandit are the same mechanism with different names."
+- "A guarded rollout protects a release while it ramps by rolling back on a regression; an adaptive trigger protects a feature after release by switching variations on a threshold; an experiment or bandit isn't a safety net at all but an optimization loop that picks the better variation from data."
+- "Experiments replace guarded rollouts: once you measure engagement you no longer need to watch for errors."
+- "All three react at the same timescale and differ only in which metric they watch."
 solution:
 - 1
 difficulty: basic

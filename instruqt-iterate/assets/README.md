@@ -6,6 +6,8 @@ these during the verification click-through (see
 placeholders. Capture at a comfortable browser width (~1280px), crop to the
 relevant UI, PNG.
 
+> The `.png` files currently in this directory are flat placeholder images so `instruqt track validate`/`push` succeed; replace each with the real screenshot described below (same filename).
+
 | File | Challenge | What to capture |
 |---|---|---|
 | `itr-02-create-metric.png` | 02 | The Create metric dialog filled in: Custom, event key `recs-engagement`, Occurrence (Percent), higher is better. |

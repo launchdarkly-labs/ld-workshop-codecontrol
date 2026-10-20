@@ -1,14 +1,26 @@
 version: "3"
 virtualbrowsers:
+# REQUIRED: this URL must stay exactly as-is (launchdarkly-instruqt-track skill
+# contract). The Lambda looks up the sandbox's LaunchDarkly magic-login link
+# (written to DynamoDB by terraform apply in track setup) and signs the learner
+# into their own LaunchDarkly project.
 - name: launchdarkly
-  url: https://i3vcudz5ncoet6xkoaqxnos7mu0sdcpz.lambda-url.us-east-2.on.aws/?sandboxId=${_SANDBOX_ID}
+  url: https://l5vv6unuu4ycp6vt3bzlm6tczu0cyrqt.lambda-url.us-east-2.on.aws/?sandboxId=${_SANDBOX_ID}
 virtualmachines:
 - name: workstation
   # Single shared image for all three CodeControl tracks. Baked by the
-  # operator from vm-image/ inputs and registered with Instruqt under
-  # this name (see vm-image/README.md).
+  # operator from vm-image/image.sh and registered with Instruqt under this
+  # name (see vm-image/README.md).
   image: launchdarkly/workshop-codecontrol
   shell: /bin/bash
   machine_type: n1-standard-1
+# REQUIRED: all four secrets. Terraform in /opt/ld/ld-workshop-participant uses
+# the AWS ones for the login-handler remote state + DynamoDB;
+# LAUNCHDARKLY_ACCESS_TOKEN drives terraform and every LaunchDarkly REST API
+# call in lifecycle scripts. Nothing in app/ or traffic-generator/ reads any
+# of them.
 secrets:
+- name: AWS_REGION
+- name: AWS_ACCESS_KEY_ID
+- name: AWS_SECRET_ACCESS_KEY
 - name: LAUNCHDARKLY_ACCESS_TOKEN

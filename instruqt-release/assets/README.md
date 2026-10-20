@@ -6,6 +6,8 @@ these during the verification click-through (see
 placeholders. Capture at a comfortable browser width (~1280px), crop to the
 relevant UI, PNG.
 
+> The `.png` files currently in this directory are flat placeholder images so `instruqt track validate`/`push` succeed; replace each with the real screenshot described below (same filename).
+
 | File | Challenge | What to capture |
 |---|---|---|
 | `rel-02-create-flag.png` | 02 | The create-flag dialog, filled in for Release Otto (key `release-otto`, client-side checkbox visible). |

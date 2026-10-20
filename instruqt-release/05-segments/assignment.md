@@ -1,6 +1,5 @@
 ---
 slug: segments
-id: 0crjb7d5szgf
 type: challenge
 title: Segments
 teaser: Make your beta audience reusable.
@@ -10,20 +9,21 @@ notes:
     be trying more than Otto. Segments make that audience something you
     define once and reuse everywhere.
 tabs:
-- id: 2tkouxpxngt4
-  title: LaunchDarkly
+- title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- id: xamcpz3oq71u
-  title: ToggleWear
+- title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- id: je662aoxi3x2
-  title: Code Editor
+- title: Code Editor
   type: service
   hostname: workstation
   port: 8080
+- title: Shell
+  type: terminal
+  hostname: workstation
+  workdir: /opt/ld/codecontrol/app
 difficulty: basic
 timelimit: 600
 enhanced_loading: null

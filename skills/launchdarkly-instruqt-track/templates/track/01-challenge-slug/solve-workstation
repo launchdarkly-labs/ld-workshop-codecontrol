@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Challenge solve: perform the learner's work via the API so later challenges
+# can start from the right state (runs when the learner clicks Skip).
+#
+set -euo pipefail
+source /opt/ld/ld.env
+LD_API="https://app.launchdarkly.com/api/v2"
+
+curl -fsS -X PATCH "${LD_API}/flags/${LD_PROJECT_KEY}/__FLAG_KEY__" \
+  -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}" \
+  -H "Content-Type: application/json; domain-model=launchdarkly.semanticpatch" \
+  -d "{\"environmentKey\": \"${LD_ENV_KEY}\", \"instructions\": [{\"kind\": \"turnFlagOn\"}]}" >/dev/null
+
+exit 0

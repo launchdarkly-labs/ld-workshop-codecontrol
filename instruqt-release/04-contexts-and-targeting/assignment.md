@@ -1,6 +1,5 @@
 ---
 slug: contexts-and-targeting
-id: d0ps2lo0jnwg
 type: challenge
 title: Contexts and Targeting
 teaser: Show Otto to beta users first.
@@ -10,20 +9,21 @@ notes:
     You'll tell LaunchDarkly who each visitor is, then write a targeting rule
     so only beta users meet Otto first.
 tabs:
-- id: tc950zjj43nd
-  title: LaunchDarkly
+- title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- id: grc97gxyy9tj
-  title: ToggleWear
+- title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- id: mdeqcgowy8r1
-  title: Code Editor
+- title: Code Editor
   type: service
   hostname: workstation
   port: 8080
+- title: Shell
+  type: terminal
+  hostname: workstation
+  workdir: /opt/ld/codecontrol/app
 difficulty: basic
 timelimit: 900
 enhanced_loading: null

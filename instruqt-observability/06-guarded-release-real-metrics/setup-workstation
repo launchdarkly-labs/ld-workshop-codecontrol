@@ -7,6 +7,7 @@
 # rollout — that is the learner's work.
 #
 set -euo pipefail
+source /opt/ld/ld.env
 
 TF=/opt/ld/codecontrol/terraform
 

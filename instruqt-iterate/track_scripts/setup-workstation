@@ -26,18 +26,23 @@ RELEASE=$BASE/instruqt-release
 T0=$SECONDS
 step() { echo "[setup +$((SECONDS - T0))s] $*"; }
 
-# ── 1. Bootstrap the student's LaunchDarkly project (test environment only)
+# ── 1. REQUIRED (launchdarkly-instruqt-track contract): provision the
+# learner's LaunchDarkly project with the shared participant Terraform baked
+# into the image. Besides the project + "test" environment it creates the
+# team member and the magic-login record the "launchdarkly" virtual browser
+# uses to sign the learner in — which is why this module, this directory, and
+# the browser URL in config.yml must not change.
 step "bootstrapping project"
-cd "$TF/student-bootstrap"
+cd /opt/ld/ld-workshop-participant
 echo "sandbox_id = \"${_SANDBOX_ID}\"" > terraform.tfvars
-terraform init -input=false
 terraform apply -auto-approve
 
-export LD_PROJECT_KEY="$(terraform output -raw project_key)"
+export LD_PROJECT_KEY="$(terraform output -json | jq -r '.students.value[0].project_key')"
+export LD_ENV_KEY="test"
 
 # ── 2. Pull the SDK key and client-side ID for the test environment
 ENV_JSON=$(curl -fsS -X GET \
-  "https://app.launchdarkly.com/api/v2/projects/${LD_PROJECT_KEY}/environments/test" \
+  "https://app.launchdarkly.com/api/v2/projects/${LD_PROJECT_KEY}/environments/${LD_ENV_KEY}" \
   -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}")
 export LD_CLIENT_KEY=$(echo "$ENV_JSON" | jq -r ._id)
 export LD_SDK_KEY=$(echo "$ENV_JSON" | jq -r .apiKey)
@@ -46,10 +51,27 @@ for RC in ~/.profile ~/.bashrc; do
   grep -qF "export LD_PROJECT_KEY=" "$RC" 2>/dev/null || {
     echo "" >> "$RC"
     echo "export LD_PROJECT_KEY=\"$LD_PROJECT_KEY\"" >> "$RC"
-    echo "export LD_CLIENT_KEY=${LD_CLIENT_KEY}" >> "$RC"
-    echo "export LD_SDK_KEY=${LD_SDK_KEY}" >> "$RC"
+    echo "export LD_ENV_KEY=\"$LD_ENV_KEY\"" >> "$RC"
+    echo "export LD_CLIENT_KEY=\"$LD_CLIENT_KEY\"" >> "$RC"
+    echo "export LD_SDK_KEY=\"$LD_SDK_KEY\"" >> "$RC"
   }
 done
+
+# Lifecycle scripts run via the Instruqt agent and do NOT inherit ~/.profile,
+# so every challenge script does `source /opt/ld/ld.env`. Never the operator
+# token.
+cat > /opt/ld/ld.env <<ENV
+LD_PROJECT_KEY=${LD_PROJECT_KEY}
+LD_ENV_KEY=${LD_ENV_KEY}
+LD_CLIENT_KEY=${LD_CLIENT_KEY}
+LD_SDK_KEY=${LD_SDK_KEY}
+ENV
+chmod 600 /opt/ld/ld.env
+
+# Runtime variables for assignment markdown:
+# [[ Instruqt-Var key="LD_PROJECT_KEY" hostname="workstation" ]]
+agent variable set LD_PROJECT_KEY "${LD_PROJECT_KEY}" || true
+agent variable set LD_CLIENT_KEY "${LD_CLIENT_KEY}" || true
 
 # ── 3. Mint a scoped API token restricted to this project only (rationale in
 # the Release track's setup-workstation). The operator token never lands in

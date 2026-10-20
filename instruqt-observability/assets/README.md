@@ -6,6 +6,8 @@ these during the verification click-through (see
 placeholders. Capture at a comfortable browser width (~1280px), crop to the
 relevant UI, PNG.
 
+> The `.png` files currently in this directory are flat placeholder images so `instruqt track validate`/`push` succeed; replace each with the real screenshot described below (same filename).
+
 The table is populated as each challenge is authored (Phases 2–5).
 
 | File | Challenge | What to capture |

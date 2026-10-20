@@ -1,5 +1,4 @@
 slug: ld-codecontrol-observability
-id: 2sfs2p3qgw1j
 title: 'LaunchDarkly CodeControl: Observability'
 teaser: Release-scoped observability. See the error, replay the session, guard on the real signal, and let the system heal itself.
 description: |-
@@ -21,8 +20,10 @@ owner: launchdarkly
 developers:
 - kcochran@launchdarkly.com
 show_timer: true
+idle_timeout: 1200
 timelimit: 7200
 lab_config:
+  sidebar_enabled: true
   extend_ttl: 3600
   feedback_recap_enabled: true
   feedback_tab_enabled: false

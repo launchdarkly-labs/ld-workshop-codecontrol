@@ -1,6 +1,5 @@
 ---
 slug: your-first-flag
-id: nrhtmm08fvh0
 type: challenge
 title: Your First Feature Flag
 teaser: Create the flag that will control Otto's release.
@@ -10,20 +9,21 @@ notes:
     ship him to everyone at once. Step one is creating the feature flag that
     will control his release.
 tabs:
-- id: l0ur2a7ekbrv
-  title: LaunchDarkly
+- title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- id: kzvpkdw2t4ys
-  title: ToggleWear
+- title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- id: 3u6ovr87ev9a
-  title: Code Editor
+- title: Code Editor
   type: service
   hostname: workstation
   port: 8080
+- title: Shell
+  type: terminal
+  hostname: workstation
+  workdir: /opt/ld/codecontrol/app
 difficulty: basic
 timelimit: 600
 enhanced_loading: null

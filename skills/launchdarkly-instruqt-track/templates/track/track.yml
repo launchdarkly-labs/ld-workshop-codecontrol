@@ -1,0 +1,24 @@
+slug: __TRACK_SLUG__
+title: __TRACK_TITLE__
+teaser: __TRACK_TEASER__
+description: |-
+  __TRACK_DESCRIPTION__
+icon: https://launchdarkly.com/favicon-dark-mode.png
+tags:
+- launchdarkly
+owner: launchdarkly
+developers:
+- __DEVELOPER_EMAIL__
+show_timer: true
+idle_timeout: 1200
+timelimit: 7200
+lab_config:
+  sidebar_enabled: true
+  feedback_recap_enabled: true
+  feedback_tab_enabled: false
+  loadingMessages: true
+  override_challenge_layout: false
+  hideStopButton: false
+  default_layout: AssignmentRight
+  default_layout_sidebar_size: 25
+enhanced_loading: false

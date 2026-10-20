@@ -6,6 +6,7 @@
 # closing step).
 #
 set -euo pipefail
+source /opt/ld/ld.env
 
 TF=/opt/ld/codecontrol/terraform
 

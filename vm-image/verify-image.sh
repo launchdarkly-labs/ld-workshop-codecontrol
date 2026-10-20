@@ -16,8 +16,12 @@ check "terraform >= 1.5"            'terraform version -json | jq -e ".terraform
 check "jq, curl, git, unzip present" 'command -v jq && command -v curl && command -v git && command -v unzip'
 check "python3 >= 3.10"             'python3 -c "import sys; sys.exit(0 if sys.version_info >= (3,10) else 1)"'
 
+echo "Participant Terraform (skill contract)"
+check "/opt/ld/ld-workshop-participant cloned"   "test -f /opt/ld/ld-workshop-participant/main.tf"
+check "participant terraform initialized"        "test -d /opt/ld/ld-workshop-participant/.terraform"
+
 echo "Source tree"
-for d in app terraform/student-bootstrap terraform/observability-baseline terraform/lib traffic-generator instruqt-release instruqt-observability instruqt-iterate; do
+for d in app terraform/observability-baseline terraform/lib traffic-generator instruqt-release instruqt-observability instruqt-iterate; do
   check "$DEST/$d" "test -d $DEST/$d"
 done
 check "app/.env seeded with KEY= lines"      "grep -q '^LD_SDK_KEY=' $DEST/app/.env && grep -q '^LD_API_TOKEN=' $DEST/app/.env"
@@ -43,6 +47,7 @@ check "togglewear-traffic installed, NOT enabled" "systemctl cat togglewear-traf
 check "storefront answers on :3000"       "curl -fsS localhost:3000/healthz | jq -e '.ok == true'"
 check "storefront is UNWIRED (fresh image)" "curl -fsS localhost:3000/healthz | jq -e '.ld_wired == false'"
 check "code-server answers on :8080"      "curl -fsS -o /dev/null localhost:8080"
+check "code-server rooted at /opt/ld"       "systemctl cat code-server | grep -q ' /opt/ld$'"
 check "/opt/ld/traffic.env exists"        "test -f /opt/ld/traffic.env"
 
 echo

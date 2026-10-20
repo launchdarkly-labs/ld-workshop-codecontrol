@@ -1,0 +1,23 @@
+version: "3"
+virtualbrowsers:
+# REQUIRED: this URL must stay exactly as-is. The Lambda looks up the sandbox's
+# LaunchDarkly magic-login link (written to DynamoDB by terraform apply) and signs
+# the learner into their own LaunchDarkly project.
+- name: launchdarkly
+  url: https://l5vv6unuu4ycp6vt3bzlm6tczu0cyrqt.lambda-url.us-east-2.on.aws/?sandboxId=${_SANDBOX_ID}
+virtualmachines:
+- name: workstation
+  # launchdarkly/core-image = the stock image (terraform + code-server, no app).
+  # If the track bakes an app into a custom image via image.sh, change this to
+  # launchdarkly/<your-image-name> after building that image.
+  image: launchdarkly/core-image
+  shell: /bin/bash
+  machine_type: n1-standard-1
+# REQUIRED: all four secrets. Terraform uses the AWS ones for the login-handler
+# remote state + DynamoDB; LAUNCHDARKLY_ACCESS_TOKEN drives terraform and every
+# LaunchDarkly REST API call in lifecycle scripts.
+secrets:
+- name: AWS_REGION
+- name: AWS_ACCESS_KEY_ID
+- name: AWS_SECRET_ACCESS_KEY
+- name: LAUNCHDARKLY_ACCESS_TOKEN

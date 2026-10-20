@@ -4,6 +4,7 @@
 # running. Runs 03's solve first (which runs 02's) so skips chain cleanly.
 #
 set -euo pipefail
+source /opt/ld/ld.env
 bash /opt/ld/codecontrol/instruqt-iterate/03-design-an-experiment/solve-workstation
 cd /opt/ld/codecontrol/terraform/iterate-04
 echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars

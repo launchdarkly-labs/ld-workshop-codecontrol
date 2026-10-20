@@ -6,6 +6,7 @@
 # NOT apply the solve.
 #
 set -euo pipefail
+source /opt/ld/ld.env
 TF=/opt/ld/codecontrol/terraform
 cd "$TF/iterate-02"
 echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars

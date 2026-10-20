@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+# Challenge cleanup: nothing to undo. Never destroy the project here —
+# track_scripts/cleanup-workstation does that.
+#
+exit 0

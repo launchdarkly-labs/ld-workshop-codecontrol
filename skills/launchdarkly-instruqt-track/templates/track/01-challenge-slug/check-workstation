@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# Challenge check (1 minute timeout). Verify state through the LaunchDarkly
+# REST API; use fail-message for learner-facing hints.
+#
+set -euo pipefail
+source /opt/ld/ld.env
+LD_API="https://app.launchdarkly.com/api/v2"
+
+FLAG="$(curl -fsS "${LD_API}/flags/${LD_PROJECT_KEY}/__FLAG_KEY__?env=${LD_ENV_KEY}" \
+  -H "Authorization: ${LAUNCHDARKLY_ACCESS_TOKEN}")"
+
+if [ "$(echo "$FLAG" | jq -r ".environments.${LD_ENV_KEY}.on")" != "true" ]; then
+  fail-message "The flag '__FLAG_KEY__' is still off in the ${LD_ENV_KEY} environment. Toggle it on in the LaunchDarkly tab and save."
+  exit 1
+fi
+
+exit 0

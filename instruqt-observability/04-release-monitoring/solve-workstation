@@ -6,6 +6,7 @@
 # Self-sufficient: writes tfvars and inits so later tracks can replay it.
 #
 set -euo pipefail
+source /opt/ld/ld.env
 
 cd /opt/ld/codecontrol/terraform/observability-04
 echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars

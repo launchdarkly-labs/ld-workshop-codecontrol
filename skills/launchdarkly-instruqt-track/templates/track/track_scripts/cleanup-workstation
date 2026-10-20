@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# Track cleanup: REQUIRED. Destroys the learner's LaunchDarkly project, team
+# member, and DynamoDB records. Must run in the directory that holds the
+# Terraform state written by setup-workstation.
+#
+cd /opt/ld/ld-workshop-participant
+terraform destroy -auto-approve

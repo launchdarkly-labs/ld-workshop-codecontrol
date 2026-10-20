@@ -7,6 +7,7 @@
 # solving (idempotent; tolerated if a rollout is active on the rule).
 #
 set -euo pipefail
+source /opt/ld/ld.env
 
 TF=/opt/ld/codecontrol/terraform
 

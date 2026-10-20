@@ -9,6 +9,7 @@
 # fresh VM without running challenge setups first.
 #
 set -euo pipefail
+source /opt/ld/ld.env
 
 APP=/opt/ld/codecontrol/app
 TF=/opt/ld/codecontrol/terraform

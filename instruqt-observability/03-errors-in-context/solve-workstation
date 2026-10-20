@@ -5,5 +5,6 @@
 # idempotent to re-apply.
 #
 set -euo pipefail
+source /opt/ld/ld.env
 bash /opt/ld/codecontrol/instruqt-observability/02-instrument-for-errors/solve-workstation
 exit 0

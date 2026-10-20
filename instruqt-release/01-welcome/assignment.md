@@ -1,6 +1,5 @@
 ---
 slug: welcome
-id: fecknra7q6wt
 type: challenge
 title: Welcome to ToggleWear
 teaser: Meet the shop, meet Otto, and see what shipping safely looks like.
@@ -10,20 +9,21 @@ notes:
     anything, take a look around the shop and the LaunchDarkly project you'll
     be working in.
 tabs:
-- id: i5jh20wfpyha
-  title: LaunchDarkly
+- title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- id: hmuu9d3ucivq
-  title: ToggleWear
+- title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- id: wuekzko1nztq
-  title: Code Editor
+- title: Code Editor
   type: service
   hostname: workstation
   port: 8080
+- title: Shell
+  type: terminal
+  hostname: workstation
+  workdir: /opt/ld/codecontrol/app
 difficulty: basic
 timelimit: 300
 enhanced_loading: null

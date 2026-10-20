@@ -1,6 +1,5 @@
 ---
 slug: progressive-rollout
-id: i4hg6gzbe9hq
 type: challenge
 title: Progressive Rollout
 teaser: Ramp Otto from a sliver of traffic to everyone, automatically.
@@ -10,20 +9,21 @@ notes:
     but gradually. A progressive rollout ramps the flag up in stages while
     you watch real traffic move over.
 tabs:
-- id: lpnepkac2vr7
-  title: LaunchDarkly
+- title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- id: bre6jhf0bp4l
-  title: ToggleWear
+- title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- id: t2ornkqnbz5e
-  title: Code Editor
+- title: Code Editor
   type: service
   hostname: workstation
   port: 8080
+- title: Shell
+  type: terminal
+  hostname: workstation
+  workdir: /opt/ld/codecontrol/app
 difficulty: basic
 timelimit: 900
 enhanced_loading: null

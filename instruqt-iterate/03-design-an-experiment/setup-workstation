@@ -4,6 +4,7 @@
 # flowing. Does NOT create the experiment.
 #
 set -euo pipefail
+source /opt/ld/ld.env
 TF=/opt/ld/codecontrol/terraform
 cd "$TF/iterate-03"
 echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars

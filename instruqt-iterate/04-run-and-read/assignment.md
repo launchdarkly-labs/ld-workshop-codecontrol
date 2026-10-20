@@ -1,6 +1,5 @@
 ---
 slug: run-and-read
-id: 2bu37vg92rrm
 type: challenge
 title: Run and Read
 teaser: "Start the experiment, drive traffic through it, and read the results."
@@ -8,20 +7,21 @@ notes:
 - type: text
   contents: "The design is done. Now you'll start the iteration, let the synthetic shoppers vote with their clicks, and learn to read what the results table is telling you."
 tabs:
-- id: 5hgab1idfzg2
-  title: LaunchDarkly
+- title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- id: 3f76ttd8jatw
-  title: ToggleWear
+- title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- id: wrtplhncr2bi
-  title: Code Editor
+- title: Code Editor
   type: service
   hostname: workstation
   port: 8080
+- title: Shell
+  type: terminal
+  hostname: workstation
+  workdir: /opt/ld/codecontrol/app
 difficulty: basic
 timelimit: 1200
 enhanced_loading: null

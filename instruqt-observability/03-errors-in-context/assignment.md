@@ -1,6 +1,5 @@
 ---
 slug: errors-in-context
-id: u2liaub9bqw9
 type: challenge
 title: Errors in Context
 teaser: See the error attributed to the variation that caused it, then replay the session where it happened.
@@ -8,20 +7,21 @@ notes:
 - type: text
   contents: An error count is a number. An error tied to a flag variation, with a replay of the shopper who hit it, is a diagnosis.
 tabs:
-- id: isj86dgi0j9e
-  title: LaunchDarkly
+- title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- id: xb4t62g3utcq
-  title: ToggleWear
+- title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- id: 0jwir8i295hd
-  title: Code Editor
+- title: Code Editor
   type: service
   hostname: workstation
   port: 8080
+- title: Shell
+  type: terminal
+  hostname: workstation
+  workdir: /opt/ld/codecontrol/app
 difficulty: basic
 timelimit: 900
 enhanced_loading: null

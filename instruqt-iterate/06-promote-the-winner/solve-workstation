@@ -5,6 +5,7 @@
 # solve first so the chain works from any skip point.
 #
 set -euo pipefail
+source /opt/ld/ld.env
 bash /opt/ld/codecontrol/instruqt-iterate/04-run-and-read/solve-workstation
 cd /opt/ld/codecontrol/terraform/iterate-06
 echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars

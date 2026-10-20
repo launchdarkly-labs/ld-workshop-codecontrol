@@ -8,6 +8,7 @@
 # skip).
 #
 set -euo pipefail
+source /opt/ld/ld.env
 
 TF=/opt/ld/codecontrol/terraform
 APP=/opt/ld/codecontrol/app

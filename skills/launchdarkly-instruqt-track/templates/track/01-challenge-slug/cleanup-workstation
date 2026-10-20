@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+# Challenge cleanup: usually nothing. Only undo state that would confuse the
+# next challenge. Never destroy the project here (track cleanup does that).
+#
+set -euo pipefail
+exit 0

@@ -9,6 +9,9 @@
 # `tags contains [...]` filter matches it on the live API.
 #
 
+# Lifecycle scripts don't inherit ~/.profile; the track setup wrote the keys here.
+source /opt/ld/ld.env
+
 ld_get() {
   local out=$1 url=$2 status
   status=$(curl -s -o "$out" -w '%{http_code}' -X GET "$url" \

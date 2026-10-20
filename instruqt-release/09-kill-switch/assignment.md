@@ -1,6 +1,5 @@
 ---
 slug: kill-switch
-id: lvaimrbwbgmq
 type: challenge
 title: The Kill Switch
 teaser: Turn a misbehaving feature off in seconds.
@@ -10,20 +9,21 @@ notes:
     right now and you want it off. That's the kill switch, and it's the
     simplest move in the whole workshop.
 tabs:
-- id: zw50aim215gu
-  title: LaunchDarkly
+- title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- id: jbiix1jpxrd9
-  title: ToggleWear
+- title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- id: s9lzkfybnahi
-  title: Code Editor
+- title: Code Editor
   type: service
   hostname: workstation
   port: 8080
+- title: Shell
+  type: terminal
+  hostname: workstation
+  workdir: /opt/ld/codecontrol/app
 difficulty: basic
 timelimit: 600
 enhanced_loading: null

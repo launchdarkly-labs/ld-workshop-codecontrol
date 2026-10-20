@@ -6,6 +6,7 @@
 # Self-sufficient: writes tfvars and inits.
 #
 set -euo pipefail
+source /opt/ld/ld.env
 APP=/opt/ld/codecontrol/app
 TF=/opt/ld/codecontrol/terraform
 python3 "$TF/lib/patch_block.py" "$APP/server.py" "LaunchDarkly engagement tracking" "$TF/iterate-02/pastes/server-engagement.py"

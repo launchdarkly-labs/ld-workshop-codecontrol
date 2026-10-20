@@ -6,6 +6,9 @@
 # live — so a learner who undid 02 gets pointed back rather than passed.
 #
 
+# Lifecycle scripts don't inherit ~/.profile; the track setup wrote the keys here.
+source /opt/ld/ld.env
+
 APP_DIR=/opt/ld/codecontrol/app
 
 if ! grep -q 'ObservabilityPlugin(' "$APP_DIR/server.py" || ! grep -q 'new SessionReplay.default' "$APP_DIR/static/app.js"; then

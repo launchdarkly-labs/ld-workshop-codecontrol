@@ -1,6 +1,5 @@
 ---
 slug: release-monitoring
-id: 7321f3qxzmuw
 type: challenge
 title: Release Monitoring
 teaser: Read release health per variation with the metrics LaunchDarkly generated from your instrumentation.
@@ -8,20 +7,21 @@ notes:
 - type: text
   contents: Your instrumentation is already producing metrics. In this challenge you'll find them and read what they say about each variation.
 tabs:
-- id: qq0axys7x2tb
-  title: LaunchDarkly
+- title: LaunchDarkly
   type: browser
   hostname: launchdarkly
-- id: hkel9rw6g4tq
-  title: ToggleWear
+- title: ToggleWear
   type: service
   hostname: workstation
   port: 3000
-- id: glbd60xh29aj
-  title: Code Editor
+- title: Code Editor
   type: service
   hostname: workstation
   port: 8080
+- title: Shell
+  type: terminal
+  hostname: workstation
+  workdir: /opt/ld/codecontrol/app
 difficulty: basic
 timelimit: 900
 enhanced_loading: null

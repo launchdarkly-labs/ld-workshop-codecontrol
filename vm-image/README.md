@@ -8,14 +8,16 @@ repo (see "Things Claude Code does not own" in `CLAUDE.md`).
 **Image name:** `launchdarkly/workshop-codecontrol` — must match the
 `virtualmachines.image` value in every track's `config.yml`.
 
-**Contents of this directory:**
+**Contents of this directory** (shape set by the `launchdarkly-instruqt-track` skill):
 
 | File | Purpose |
 |---|---|
-| `build-image.sh` | The scripted bake: paste into a fresh Ubuntu 24.04 VM as root. Installs tools, places the source at `/opt/ld/codecontrol`, builds the venv, pre-inits Terraform, installs the units, enables services. |
+| `image.base.sh` | Skill-contract base, do not edit around the REQUIRED markers: tools (Terraform via the HashiCorp apt repo, python3), clone + `terraform init` of `ld-workshop-participant` at `/opt/ld`, code-server on :8080 rooted at `/opt/ld`. |
+| `app-install.sh` | This workshop's half: places the repo at `/opt/ld/codecontrol` (git clone, or `SOURCE_DIR` copy), builds the venv at `/opt/ld/venv`, pre-inits every Terraform module through a shared plugin cache, installs and enables the ToggleWear units. |
+| `build-image.sh` | Assembles `image.sh` from the two files above and `bash -n`s it. Re-run after editing either. |
+| `image.sh` | **Generated.** What the operator runs on the Instruqt host image. Committed so the bake needs nothing but this one file. |
 | `systemd/togglewear.service` | The storefront on :3000 (enabled at boot). |
 | `systemd/togglewear-traffic.service` | Synthetic shopper traffic (installed, disabled; labs start it). |
-| `systemd/code-server.service` | The Code Editor tab on :8080 (enabled at boot). |
 | `verify-image.sh` | Post-bake checks; run before saving the image. |
 
 Sizing note: `machine_type: n1-standard-1` is declared in `config.yml` — the
@@ -25,156 +27,86 @@ but little CPU).
 
 ## How to build
 
-1. **Start a fresh Ubuntu 24.04 (noble) base VM** in the Instruqt console
-   and open its terminal as root (`sudo -i`).
-2. **Point the script at the source.** Either edit `REPO_URL` / `REPO_REF`
-   at the top of `build-image.sh` to the commit you want baked, or — while
-   this repo has no remote — `scp` a checkout to the VM and run the script
-   with `SOURCE_DIR=/path/to/checkout` set (it copies only the directories
-   the VM needs and never `.git`).
-3. **Paste the whole script.** It prints a `==>` banner per step and stops
+1. **Instruqt: Settings → Host images → Create image**, pick an Ubuntu 24.04
+   base, and open its terminal as root (`sudo -i`).
+2. **Point `app-install.sh` at the source** and re-run `./build-image.sh`:
+   either set `REPO_URL` / `REPO_REF` to the commit you want baked, or —
+   while this repo has no remote — `scp` a checkout to the VM and export
+   `SOURCE_DIR=/path/to/checkout` before running (it copies only the
+   directories the VM needs and never `.git`).
+3. **Run `image.sh`** (paste it, or `scp` it and `bash image.sh`). It stops
    on the first failure. Expect several minutes; the venv pulls ~180 MB of
    OpenTelemetry packages for the observability plugin.
 4. **Run `/opt/ld/codecontrol/vm-image/verify-image.sh`.** Every line must
    read `OK`; the last line says "save the image."
-5. **Save the VM as an image** named `launchdarkly/workshop-codecontrol`
-   (or a suffixed name, updating every track's `config.yml` to match, so
-   labs in flight keep their current image).
+5. **Click Save** in the Instruqt console and name the image
+   `launchdarkly/workshop-codecontrol` (or a suffixed name, updating every
+   track's `config.yml` to match, so labs in flight keep their current image).
 
 Re-bake whenever `app/requirements.txt`, a unit file, an apt dependency, or
 — because setup scripts don't `git pull` at lab start — any `instruqt-*/`
 script, assignment, paste file, or Terraform module changes. The
 `.remote` files the Instruqt CLI generates on publish are never baked.
 
-## What the image must contain
+## What the image contains
 
-### Base
+### Skill contract (`image.base.sh`)
 
-- Ubuntu 24.04 (noble). The system `python3` is 3.12, which satisfies
-  `launchdarkly-server-sdk` 9.16.0 (requires >= 3.10).
-- CLI tools: `curl`, `jq`, `git`, `unzip`, `vim`, and Terraform >= 1.5.
-  `build-image.sh` installs Terraform as a direct binary from
-  `releases.hashicorp.com` (pinned in `TERRAFORM_VERSION`; HashiCorp's apt
-  repo lags on noble) and uses a shared `TF_PLUGIN_CACHE_DIR` at
-  `/opt/ld/terraform-plugin-cache` so the provider is downloaded once.
+- Ubuntu 24.04 (noble); system `python3` 3.12 (the participant Terraform runs a
+  python3 external data source; the LD SDK needs >= 3.10).
+- `terraform` from the HashiCorp apt repo, `jq`, `curl`, `git`, `unzip`, `vim`.
+- `/opt/ld/ld-workshop-participant`: clone of
+  `launchdarkly-labs/ld-workshop-participant`, `terraform init` already run.
+  Track setup applies it per sandbox; track cleanup destroys it.
+- code-server on :8080, `--auth none`, as root, rooted at `/opt/ld` (so the
+  Code Editor tab shows both `codecontrol/` and `ld-workshop-participant/`).
 
-### Repo contents at `/opt/ld/codecontrol`
-
-`build-image.sh` places these directories from this repository into the image
-(plus `vm-image/` itself, for `verify-image.sh`):
+### This workshop (`app-install.sh`)
 
 ```
 /opt/ld/codecontrol/
-├── app/                    # ToggleWear app
-├── terraform/              # student-bootstrap, per-challenge solve modules, observability-baseline
+├── app/                    # ToggleWear app (app/.env seeded from .env.example)
+├── terraform/              # lib/, observability-baseline/, per-challenge solve modules
 ├── traffic-generator/      # synthetic traffic scripts
-├── instruqt-release/       # Release track (its solve-workstation scripts are replayed
-│                           #   by the Observability/Iterate track-level setups)
-├── instruqt-observability/ # Observability track
-└── instruqt-iterate/       # Iterate track (once it exists)
+├── instruqt-release/       # the three tracks — baked only so later tracks can call
+├── instruqt-observability/ #   earlier tracks' solve-workstation scripts
+├── instruqt-iterate/
+└── vm-image/               # for verify-image.sh
+/opt/ld/venv                # one venv: app + generators, incl. launchdarkly-observability
+/opt/ld/terraform-plugin-cache   # shared provider cache; every module is pre-inited
+/opt/ld/traffic.env         # optional traffic profile (empty = generator defaults)
 ```
 
-The `instruqt-*/` directories are in the image only so later tracks can call
-earlier tracks' `solve-workstation` scripts at
-`/opt/ld/codecontrol/instruqt-release/<NN-slug>/solve-workstation` — Instruqt
-itself only ships a track's own challenge scripts to the VM at run time.
-Never bake `.remote` files or anything generated by the Instruqt CLI.
-
-- Create `app/.env` from `app/.env.example` at bake time. Track-level
-  `setup-workstation` fills in the real values with `sed` at lab start, so
-  the file must exist with the `KEY=` lines present.
-- Pre-run `terraform init` in `terraform/student-bootstrap/`,
-  `terraform/observability-baseline/`, and every `terraform/<track>-NN/`
-  module (or configure a shared `TF_PLUGIN_CACHE_DIR`) so provider downloads
-  don't eat into challenge startup time. The provider is pinned `~> 2.30`.
-  This matters most for the Observability and Iterate track-level setups,
-  which run seven or more applies back to back.
-
-### Python environment
-
-Ubuntu noble blocks system-wide `pip install` (PEP 668), so use a venv:
-
-```
-python3 -m venv /opt/ld/venv
-/opt/ld/venv/bin/pip install -r /opt/ld/codecontrol/app/requirements.txt
-```
-
-`requirements.txt` includes `launchdarkly-observability` (the OpenTelemetry
-observability plugin used by the Observability track). It is heavy (~180 MB
-of OpenTelemetry packages) and pinned to exact OpenTelemetry versions, so it
-must be installed at bake time, never at lab start. Verify with
-`/opt/ld/venv/bin/python -c "import ldobserve"`.
+Services: `togglewear.service` (uvicorn `--reload` on :3000, enabled) and
+`togglewear-traffic.service` (installed, disabled; labs start it via
+`terraform/lib/traffic.sh`). `--reload` matters: learners paste into
+`server.py` and the server picks it up on save; it does not re-read `.env`,
+so track scripts `stop`/`start` the service after rewriting it.
 
 Egress: once instrumented, the app sends telemetry over gRPC to
 `otel.observability.app.launchdarkly.com:4317` and fetches config from
-`pub.observability.app.launchdarkly.com:443`; the browser plugins talk to
-the same hosts over HTTPS. Standard Instruqt GCP egress allows this; if a
-locked-down network ever blocks 4317, set
-`OTEL_EXPORTER_OTLP_ENDPOINT=https://otel.observability.app.launchdarkly.com:443`
-in the service environment.
+`pub.observability.app.launchdarkly.com:443`; browser plugins use the same
+hosts over HTTPS. If a network blocks 4317, uncomment the
+`OTEL_EXPORTER_OTLP_ENDPOINT` line in `systemd/togglewear.service`.
 
-### Services
+### Written at lab start, never baked
 
-Three services are installed; the first two are enabled and running at boot:
-
-1. **`togglewear.service`** (systemd) — the ToggleWear app on port 3000:
-   - `WorkingDirectory=/opt/ld/codecontrol/app`
-   - `EnvironmentFile=/opt/ld/codecontrol/app/.env`
-   - `ExecStart=/opt/ld/venv/bin/uvicorn server:app --host 0.0.0.0 --port 3000 --reload`
-   - `Restart=on-failure`
-   - `--reload` matters: learners paste code into `server.py` during labs
-     and the server must pick it up on save without a manual restart
-     (uvicorn[standard] ships the watchfiles reloader).
-   - Note: track scripts do `service togglewear stop` / `start` (not
-     `restart`) so refreshed `.env` values are picked up.
-
-2. **code-server** on port 8080 (the "Code Editor" service tab):
-   - Install from the official install script.
-   - Run as **root** with `--auth none --bind-addr 0.0.0.0:8080`, opening
-     `/opt/ld/codecontrol/app` as the workspace. Root matters: lab
-     instructions may run `service` and `terraform` commands from the
-     code-server terminal without sudo.
-
-3. **`togglewear-traffic.service`** (systemd) — synthetic shopper traffic,
-   **installed but disabled at boot**. Challenge setup scripts start it when
-   a lab needs live traffic (first: Release 07, progressive rollout):
-   - `ExecStart=/opt/ld/venv/bin/python /opt/ld/codecontrol/traffic-generator/generate_traffic.py`
-   - `EnvironmentFile=-/opt/ld/traffic.env` (the leading `-` makes it
-     optional). Challenge setups write traffic profiles to this file via
-     `terraform/lib/traffic.sh` and stop/start the service; the Release
-     track runs on the script's defaults, the Observability track raises
-     the carousel-browsing rate and the share of shoppers who view the
-     Rollout Tote, and the Iterate track uses a high-rate profile with
-     weighted recommendation clicks (profiles: `release`, `recs`, `exp`).
-   - `Restart=on-failure`
-   - Stdlib only; drives the app on `localhost:3000`.
-
-The unit files in `systemd/` implement exactly these parameters;
-`build-image.sh` installs them with `install -m 644` into
-`/etc/systemd/system/` and enables the first two.
-
-### Instruqt expectations
-
-- The Instruqt agent/bootstrap must be present (standard Instruqt base image
-  or Packer template). Track scripts wait on
-  `/opt/instruqt/bootstrap/host-bootstrap-completed` before running.
-- No AWS credentials, no LLM runtime, no GPU. The only secret any track
-  declares is `LAUNCHDARKLY_ACCESS_TOKEN`, injected by Instruqt at runtime —
-  never baked into the image.
+`/opt/ld/ld.env` (project/env/SDK/client keys for lifecycle scripts),
+`app/.env` values, the scoped `LD_API_TOKEN`, and the sandbox's LaunchDarkly
+project itself. `LAUNCHDARKLY_ACCESS_TOKEN` and the AWS secrets arrive from
+Instruqt only inside lifecycle scripts and are never written to disk.
 
 ## Handoff checklist
 
-1. Bake the image with `build-image.sh` as described above.
-2. Run `verify-image.sh` on the VM (it covers the storefront on :3000,
-   code-server on :8080, Terraform >= 1.5, the venv imports, every module's
-   `.terraform/`, the unit states, and that nothing stateful was baked).
-3. Save/register it with Instruqt as `launchdarkly/workshop-codecontrol`.
-4. Confirm the Release track-level `setup-workstation` completes well under
-   60s on a fresh instance (bootstrap apply + key pulls + token mint +
-   service start).
-5. Confirm the Observability and Iterate track-level `setup-workstation`
-   scripts (each replays six Release solves and applies the recommendations
-   baseline) stay near the ~60s budget; it logs per-step timings as `[setup +Ns]`.
-   If it runs long, the fallback is pre-baking the post-Release LaunchDarkly
-   state into the image — raise it with the workshop owner rather than
-   trimming the replay.
+1. Build the image from `image.sh` as described above.
+2. Run `/opt/ld/codecontrol/vm-image/verify-image.sh` on the VM; every line
+   must read `OK`.
+3. Save it as `launchdarkly/workshop-codecontrol`.
+4. From each track directory: `instruqt track validate && instruqt track push`,
+   then `instruqt track open`, play it, and watch `instruqt track logs`.
+   The first push writes `id:` fields into the files — commit them.
+5. Confirm each track-level `setup-workstation` stays near the ~60s budget
+   (the Observability and Iterate ones log `[setup +Ns]` per step). If it
+   runs long, the fallback is pre-baking the post-Release LaunchDarkly state
+   into the image — raise it with the workshop owner rather than trimming
+   the replay.

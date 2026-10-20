@@ -5,6 +5,7 @@
 # stopped (two running experiments on one rule aren't allowed).
 #
 set -euo pipefail
+source /opt/ld/ld.env
 bash /opt/ld/codecontrol/instruqt-iterate/06-promote-the-winner/solve-workstation
 cd /opt/ld/codecontrol/terraform/iterate-07
 echo "project_key = \"${LD_PROJECT_KEY}\"" > terraform.tfvars
