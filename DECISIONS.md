@@ -327,3 +327,13 @@ Two plays (the second after patching `terraform/lib/exp.sh` on the VM, since `li
 - **The bandit solve failed on two API rules in successive plays:** `canReshuffleTraffic` must be true for a MAB, and the update frequency must be **1–24 hours** (the solve had asked for one minute). Both are fixed in the helper, and a fourth play with the patched helper on the VM confirmed the full chain: experiment created, started, shipped with Personalized as winner, then the bandit created and started. The hour-long minimum also reshaped lab 07: the learner configures and starts the bandit and reads its initial results, and the prose explains that the first reallocation happens at the next hourly update rather than promising to watch the split move inside the lab.
 - **The 06 check** said "still running" when no experiment existed at all; it now names the missing experiment first.
 - `terraform/lib/` changes need an **image re-bake** to reach learners; the operator checklist notes this.
+
+---
+
+## Release pipelines removed; guarded-rollout solves materialize the post-rollback state (2026-10-20)
+
+**Decision (operator):** remove every use of LaunchDarkly's beta **release pipelines** API from the repo and do not replace it. Release pipelines are deprecated and a successor product is about to ship; the beta endpoint also returned HTTP 404 in every live sandbox. This supersedes "Rollout solves use the beta release APIs".
+
+**What this means for the two guarded-release labs (Release 08, Observability 06):** a guarded rollout can only be started from the LaunchDarkly UI, so their `solve-workstation` scripts now materialize the state a successful learner ends in *after* the guard rolls the bad variation back — `otto-style` on Concise, `recommendations-strategy` on Bestsellers — and nothing else. Their checks still require a real guarded rollout (`?filter=guardedRollout:any`), so a learner who clicks Skip and then Check fails honestly. This is the same pattern already accepted for Observability 07's adaptive trigger, and it has no practical cost: Instruqt's Skip advances the learner regardless of the check, and later challenges' setups reset the flag states they need.
+
+Deleted: `terraform/lib/start-guarded-rollout.sh`, `terraform/release-08/start-guarded-rollout.sh`, the `null_resource.start_guarded_rollout` in `release-08` (and its `null` provider), and `observability-06`'s pipeline call (now a `set-fallthrough` to Bestsellers).

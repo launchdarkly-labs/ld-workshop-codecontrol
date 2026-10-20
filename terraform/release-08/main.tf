@@ -4,9 +4,14 @@
 #  - Supporting infra the learner finds PRE-BUILT (otto-style flag serving
 #    concise, the otto-response-latency metric). setup-workstation applies
 #    just these with `terraform apply -target=...`.
-#  - The learner's own work (the guarded rollout on otto-style), which
-#    solve-workstation materializes by applying the whole module, including
-#    null_resource.start_guarded_rollout below.
+#  - The learner's own work — the guarded rollout on otto-style — which has
+#    NO public API (the UI drives an internal measured-rollouts service; the
+#    beta release-pipelines API that once stood in for it returned 404 in
+#    live sandboxes and release pipelines are deprecated, so it was removed
+#    on 2026-10-20 without replacement). The solve therefore materializes the
+#    state a learner is in AFTER the guarded release rolls back: otto-style
+#    serving Concise, which is exactly this module's baseline. Skip → Check
+#    on 08 fails honestly, like 07's adaptive trigger in Observability.
 provider "launchdarkly" {}
 
 resource "launchdarkly_feature_flag" "otto_style" {
@@ -58,21 +63,4 @@ resource "launchdarkly_metric" "otto_response_latency" {
   analysis_type         = "mean"
   unit_aggregation_type = "average"
   randomization_units   = ["user"]
-}
-
-# Start the guarded rollout of Chatty Otto (solve only — excluded from
-# setup's -target list). Uses the beta release APIs per DECISIONS.md.
-resource "null_resource" "start_guarded_rollout" {
-  depends_on = [
-    launchdarkly_feature_flag_environment.otto_style_test,
-    launchdarkly_metric.otto_response_latency,
-  ]
-
-  triggers = {
-    always = timestamp()
-  }
-
-  provisioner "local-exec" {
-    command = "bash ${path.module}/start-guarded-rollout.sh ${var.project_key}"
-  }
 }

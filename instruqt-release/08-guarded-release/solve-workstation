@@ -1,8 +1,9 @@
 #!/bin/bash
 #
 # Materialize the end-state of 08-guarded-release: the app wiring (style
-# evaluation + latency tracking), supporting infra, and a guarded
-# (monitored) release of Chatty Otto via the beta release APIs.
+# evaluation + latency tracking) and the supporting infra. A guarded rollout
+# cannot be started via any public API, so the solve leaves otto-style on
+# Concise — the state a learner is in after the guard rolls Chatty back.
 #
 # Self-sufficient: repeats setup's pastes (patch_block is idempotent) and
 # writes tfvars/inits, so later tracks can replay solves in order on a

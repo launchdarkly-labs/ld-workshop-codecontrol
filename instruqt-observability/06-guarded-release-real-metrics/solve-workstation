@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# Materialize the end-state of 06-guarded-release-real-metrics: a guarded
-# (monitored) release of the personalized strategy via the beta release
-# APIs. If the beta call fails, the helper logs loudly and leaves the flag
-# on bestsellers — the post-rollback state (see the helper's header).
+# Materialize the end-state of 06-guarded-release-real-metrics: the default
+# rule back on bestsellers — where a learner lands after the guard rolls the
+# personalized release back. Guarded rollouts cannot be started via a public
+# API, so that is all a solve can honestly do.
 #
 # Self-sufficient: writes tfvars and inits so later tracks can replay it.
 #

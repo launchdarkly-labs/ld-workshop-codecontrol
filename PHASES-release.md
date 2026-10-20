@@ -305,6 +305,6 @@ Recommendation: teach the **manual percentage ramp** in 07 (it teaches the mecha
 1. **JS client SDK package:** → **`@launchdarkly/js-client-sdk` v4.**
 2. **Plan entitlement:** → **the workshop LD account includes Guardian**; guarded rollouts fully available, no trial limits in play.
 3. **Challenge 07 shape:** → **the automated progressive-rollout feature** (not a manual ramp).
-4. **Challenge 08 solve-on-skip:** → **use the beta release APIs** in solve scripts (applies to 07's solve too, since progressive rollouts share the no-stable-API gap).
+4. **Challenge 08 solve-on-skip:** → ~~use the beta release APIs~~ **Superseded 2026-10-20: release pipelines removed; the solve materializes the post-rollback end-state and Skip→Check fails honestly** (see `DECISIONS.md`).
 5. **Simple metric for 08:** → **`otto-response-latency`** (custom numeric, LowerThanBaseline).
 6. **UI-only numbers to capture:** → agreed; items added to `OPERATOR-CHECKLIST-release.md`.

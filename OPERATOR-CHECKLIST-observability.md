@@ -51,7 +51,7 @@ For each challenge: confirm UI labels against the live UI; capture screenshots i
 - [ ] Verify the guarded-rollout flow on the default rule: change to Personalized → Serve → **Guarded rollout** → health check → metric picker offers **User HTTP error rate** → **Automatic rollback** → Target by `user` → duration. Capture the health-check states and the shortest duration offered.
 - [ ] Confirm the regression fires from the `recs` traffic profile alone within a presenter-friendly window (10 contexts per variation minimum; checks every ~10 s), and that `sabotage.py --target recs` forces it faster. Note times.
 - [ ] Confirm the rollback reverts the default rule to Bestsellers and the carousel survives a tote click.
-- [ ] Confirm the solve's pipeline-based monitored release registers under `filter=guardedRollout:any` (shared VERIFY with Release 08).
+- [x] Solve-on-skip for 06: decided 2026-10-20 — the solve sets the default rule back to Bestsellers (post-rollback state); guarded rollouts are UI-only, so Skip→Check fails honestly, like Release 08 and 07.
 - [ ] Confirm the `assignment.md` intro and closing table make the "same mechanism, real signal this time" point clearly.
 - [ ] Screenshots: `obs-06-guarded-config.png`, `obs-06-monitoring.png`, `obs-06-rolled-back.png`.
 

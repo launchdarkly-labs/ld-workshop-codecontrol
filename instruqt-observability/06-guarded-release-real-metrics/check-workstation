@@ -4,9 +4,9 @@
 # monitoring, regressed, rolledBack, or completed all count; a learner whose
 # rollout already rolled back has succeeded at this lab).
 #
-# VERIFY: same as Release 08 — confirm both a Serve-menu guarded rollout and
-# the solve's pipeline-based monitored release register under the
-# flags-list `guardedRollout:` filter.
+# A guarded rollout can only be started in the UI (no public API), so a
+# learner who Skips this challenge will not pass this check — accepted, same
+# as Release 08 and the adaptive trigger in 07.
 #
 
 # Lifecycle scripts don't inherit ~/.profile; the track setup wrote the keys here.
