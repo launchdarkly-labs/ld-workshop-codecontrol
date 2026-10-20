@@ -86,11 +86,16 @@ case "$cmd" in
       | if $type == "mab" then .iteration.reallocationFrequencyMillis = 60000 else . end')
     STATUS=$(curl -sS -o /tmp/exp-create.json -w '%{http_code}' -X POST \
       "$API/projects/$PROJ/environments/$ENV/experiments" "${AUTHH[@]}" "${JSONH[@]}" --data-raw "$BODY")
-    case "$STATUS" in
-      200|201) echo "created $TYPE '$KEY'" ;;
-      409) echo "$TYPE '$KEY' already exists (ok)" ;;
-      *) echo "ERROR: create $TYPE returned HTTP $STATUS: $(cat /tmp/exp-create.json)" >&2; exit 1 ;;
-    esac
+    # LaunchDarkly reports an existing key as 400 duplicate_experiment_key (not
+    # 409) — first live play. Solves chain (07 → 06 → 04 → 03), so re-creation
+    # must be a no-op.
+    if [ "$STATUS" == "200" ] || [ "$STATUS" == "201" ]; then
+      echo "created $TYPE '$KEY'"
+    elif [ "$STATUS" == "409" ] || grep -qiE 'duplicate|already exists' /tmp/exp-create.json; then
+      echo "$TYPE '$KEY' already exists (ok)"
+    else
+      echo "ERROR: create $TYPE returned HTTP $STATUS: $(cat /tmp/exp-create.json)" >&2; exit 1
+    fi
     ;;
 
   start)
@@ -98,13 +103,15 @@ case "$cmd" in
     STATUS=$(curl -sS -o /tmp/exp-start.json -w '%{http_code}' -X PATCH \
       "$API/projects/$PROJ/environments/$ENV/experiments/$KEY" "${AUTHH[@]}" "${PATCHH[@]}" \
       --data-raw '{"instructions":[{"kind":"startIteration","changeJustification":"Started by the Iterate track solve script."}]}')
-    case "$STATUS" in
-      200) echo "started '$KEY'" ;;
-      400|409)
-        if grep -qiE "already|running" /tmp/exp-start.json; then echo "'$KEY' already running (ok)"; else
-          echo "ERROR: start returned HTTP $STATUS: $(cat /tmp/exp-start.json)" >&2; exit 1; fi ;;
-      *) echo "ERROR: start returned HTTP $STATUS: $(cat /tmp/exp-start.json)" >&2; exit 1 ;;
-    esac
+    if [ "$STATUS" == "200" ]; then
+      echo "started '$KEY'"
+    elif grep -qiE "already|running|stopped" /tmp/exp-start.json; then
+      # Already running, or already stopped with a winner (a later solve ran
+      # first): both are acceptable end-states for "the iteration was started".
+      echo "'$KEY' iteration already started (ok): $(jq -r '.message // empty' /tmp/exp-start.json)"
+    else
+      echo "ERROR: start returned HTTP $STATUS: $(cat /tmp/exp-start.json)" >&2; exit 1
+    fi
     ;;
 
   ship)
