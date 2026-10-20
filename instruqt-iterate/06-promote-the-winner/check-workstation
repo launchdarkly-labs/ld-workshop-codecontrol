@@ -10,12 +10,12 @@ STATUS=$(curl -s -o /tmp/ck-itr06-exp.json -w '%{http_code}' -X GET \
   "https://app.launchdarkly.com/api/v2/projects/$LD_PROJECT_KEY/environments/test/experiments?filter=flagKey:recommendations-strategy&expand=currentIteration" \
   -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
 if [ "$STATUS" != "200" ]; then
-  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click Check again in a few seconds; if it keeps happening, tell your instructor."
   exit 1
 fi
 SHIPPED=$(jq '[.items[]? | select((.type // "experiment") == "experiment") | select(.currentIteration.status == "stopped" and (.currentIteration.winningTreatmentId // "") != "")] | length' /tmp/ck-itr06-exp.json)
 if [ "$SHIPPED" == "0" ]; then
-  fail-message "The experiment is still running (or was stopped without naming a winner). On its **Results** tab click **Ship it**, or click **Stop** and choose **Personalized** from the Ship menu, enter a reason, and click **Stop experiment**."
+  fail-message "The experiment is still running (or was stopped without naming a winner). On its Results tab click Ship it, or click Stop and choose Personalized from the Ship menu, enter a reason, and click Stop experiment."
   exit 1
 fi
 
@@ -23,12 +23,12 @@ STATUS=$(curl -s -o /tmp/ck-itr06-flag.json -w '%{http_code}' -X GET \
   'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'/recommendations-strategy' \
   -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
 if [ "$STATUS" != "200" ]; then
-  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds."
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click Check again in a few seconds."
   exit 1
 fi
 # Variation indexes: 0 = bestsellers, 1 = personalized.
 if [ "$(jq -r '.environments.test.fallthrough.variation // "rollout"' /tmp/ck-itr06-flag.json)" != "1" ]; then
-  fail-message "The experiment is stopped, but **recommendations-strategy**'s default rule isn't serving **Personalized** to everyone. Shipping the winner should have done this — if you stopped without shipping, edit the default rule to serve **Personalized** and save."
+  fail-message "The experiment is stopped, but recommendations-strategy's default rule isn't serving Personalized to everyone. Shipping the winner should have done this — if you stopped without shipping, edit the default rule to serve Personalized and save."
   exit 1
 fi
 exit 0

@@ -60,7 +60,7 @@ For each challenge: confirm UI labels in `assignment.md` against the live LD UI;
 - [ ] **Note the minimum contexts-per-step** if surfaced anywhere in the UI (never published in docs); confirm lab traffic volume clears it so steps don't auto-extend past presenter patience.
 - [ ] Confirm the regression fires from organic traffic (Chatty Otto's slower replies) within a presenter-friendly window, and that the sabotage script forces it on demand.
 - [ ] Confirm the rollback reverts to Concise Otto and the app reflects it.
-- [ ] Verify the beta-API-driven solve produces a real monitored guarded rollout (the check's `filter=guardedRollout:` query must pass after solve).
+- [ ] ~~Verify the beta-API-driven solve produces a real monitored guarded rollout~~ **Live play 2026-10-19: the release-pipelines beta POST returned 404; the solve fell back to Concise.** Decide: accept Skip→Check failing on 08, relax the check, or find a working API (check the account's release-pipelines entitlement / try release policies).
 - [ ] Screenshots: the guarded-rollout configuration, an in-progress rollout, the regression-detected event, the post-rollback state.
 
 ### 09 Kill switch

@@ -17,7 +17,7 @@ ld_get() {
   status=$(curl -s -o "$out" -w '%{http_code}' -X GET "$url" \
     -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
   if [ "$status" != "200" ]; then
-    fail-message "Couldn't reach the LaunchDarkly API (HTTP $status). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+    fail-message "Couldn't reach the LaunchDarkly API (HTTP $status). Click Check again in a few seconds; if it keeps happening, tell your instructor."
     exit 1
   fi
 }
@@ -34,12 +34,12 @@ fi
 ld_get /tmp/ck-obs04-flag.json \
   'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'/recommendations-strategy'
 if [ "$(jq -r '.environments.test.on' /tmp/ck-obs04-flag.json)" != "true" ]; then
-  fail-message "**recommendations-strategy** is toggled off. Turn it on and set the default rule to **Bestsellers** — we want the carousel live, just on the safe strategy."
+  fail-message "recommendations-strategy is toggled off. Turn it on and set the default rule to Bestsellers — we want the carousel live, just on the safe strategy."
   exit 1
 fi
 # Variation indexes: 0 = bestsellers, 1 = personalized.
 if [ "$(jq -r '.environments.test.fallthrough.variation // "rollout"' /tmp/ck-obs04-flag.json)" != "0" ]; then
-  fail-message "The metrics are there, but **recommendations-strategy** is still serving **Personalized**. Finish the lab by editing the default rule back to **Bestsellers** and saving — stop the bleeding before the next release."
+  fail-message "The metrics are there, but recommendations-strategy is still serving Personalized. Finish the lab by editing the default rule back to Bestsellers and saving — stop the bleeding before the next release."
   exit 1
 fi
 

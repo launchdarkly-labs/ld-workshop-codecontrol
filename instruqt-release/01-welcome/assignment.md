@@ -59,10 +59,11 @@ This is Track 1 of the CodeControl series. **Observability** (releases you can s
 
 # Look around
 
-You have three tabs, and all of them matter:
+You have four tabs, and all of them matter:
 
 1. [ToggleWear](#tab-1) — the live storefront. Browse it. Note what's *missing*: no chat widget anywhere. Otto doesn't exist yet.
 2. [LaunchDarkly](#tab-0) — your own LaunchDarkly project, created just for this session. It's nearly empty. The flags list is where everything starts.
-3. [Code Editor](#tab-2) — the shop's source code. You'll paste a few marked blocks into it along the way; all code is copy-paste, never from scratch.
+3. [Code Editor](#tab-2) — the shop's source code, under `codecontrol/app`. You'll paste a few marked blocks into it along the way; all code is copy-paste, never from scratch.
+4. [Shell](#tab-3) — a terminal on the same machine, already in the app directory, for the odd command a lab asks you to run.
 
 When you've had a look, click **Check**, then **Next**. Otto is waiting to exist.

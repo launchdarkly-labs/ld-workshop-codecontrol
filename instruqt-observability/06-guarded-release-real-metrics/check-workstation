@@ -16,13 +16,13 @@ STATUS=$(curl -s -o /tmp/ck-obs06.json -w '%{http_code}' -X GET \
   'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'?filter=guardedRollout:any' \
   -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
 if [ "$STATUS" != "200" ]; then
-  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click Check again in a few seconds; if it keeps happening, tell your instructor."
   exit 1
 fi
 
 GUARDED=$(jq '[.items[]?.key] | index("recommendations-strategy") != null' /tmp/ck-obs06.json)
 if [ "$GUARDED" != "true" ]; then
-  fail-message "No guarded rollout found on **recommendations-strategy**. Edit the default rule, change the served variation to **Personalized**, choose **Guarded rollout** from the Serve menu, attach **User HTTP error rate**, check **Automatic rollback**, and save."
+  fail-message "No guarded rollout found on recommendations-strategy. Edit the default rule, change the served variation to Personalized, choose Guarded rollout from the Serve menu, attach User HTTP error rate, check Automatic rollback, and save."
   exit 1
 fi
 

@@ -40,7 +40,10 @@ cat > /root/.local/share/code-server/User/settings.json <<-SETTINGS
 {
     "workbench.colorTheme": "Default Dark+",
     "workbench.startupEditor": "none",
-    "security.workspace.trust.enabled": false
+    "security.workspace.trust.enabled": false,
+    "chat.disableAIFeatures": true,
+    "chat.commandCenter.enabled": false,
+    "workbench.secondarySideBar.defaultVisibility": "hidden"
 }
 SETTINGS
 

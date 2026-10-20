@@ -11,7 +11,7 @@ source /opt/ld/ld.env
 APP_DIR=/opt/ld/codecontrol/app
 
 if ! grep -q 'ld_client.track("recs-engagement"' "$APP_DIR/server.py"; then
-  fail-message "The engagement event isn't being sent yet. Replace the \`LaunchDarkly engagement tracking paste block\` in the \`/recommendations/click\` handler in \`server.py\` with this lab's \`track()\` call."
+  fail-message "The engagement event isn't being sent yet. Replace the 'LaunchDarkly engagement tracking paste block' in the '/recommendations/click' handler in 'server.py' with this lab's 'track()' call."
   exit 1
 fi
 
@@ -19,20 +19,20 @@ STATUS=$(curl -s -o /tmp/ck-itr02.json -w '%{http_code}' -X GET \
   'https://app.launchdarkly.com/api/v2/metrics/'$LD_PROJECT_KEY'?limit=50&filter=eventKeys%20anyOf%20%5B%22recs-engagement%22%5D' \
   -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
 if [ "$STATUS" != "200" ]; then
-  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click Check again in a few seconds; if it keeps happening, tell your instructor."
   exit 1
 fi
 COUNT=$(jq '[.items[]?] | length' /tmp/ck-itr02.json)
 if [ "$COUNT" == "0" ]; then
-  fail-message "No metric uses the event key \`recs-engagement\` yet. In the LaunchDarkly tab, open **Metrics**, click **Create metric**, choose the **Custom** event kind with event key \`recs-engagement\`, pick **Occurrence (Percent)**, and name it **Recs engagement**."
+  fail-message "No metric uses the event key 'recs-engagement' yet. In the LaunchDarkly tab, open Metrics, click Create metric, choose the Custom event kind with event key 'recs-engagement', pick Occurrence (Percent), and name it Recs engagement."
   exit 1
 fi
 if [ "$(jq -r '.items[0].isNumeric' /tmp/ck-itr02.json)" == "true" ]; then
-  fail-message "Your metric is numeric, but engagement should be a conversion: did the shopper click at least once? Edit the metric (or create it again) and choose **Occurrence (Percent)**."
+  fail-message "Your metric is numeric, but engagement should be a conversion: did the shopper click at least once? Edit the metric (or create it again) and choose Occurrence (Percent)."
   exit 1
 fi
 if [ "$(jq -r '.items[0].successCriteria // "HigherThanBaseline"' /tmp/ck-itr02.json)" != "HigherThanBaseline" ]; then
-  fail-message "Your metric is set to **lower is better**. More clicks is good — edit the metric and choose **higher is better**, or the experiment will read Personalized's extra clicks as a loss."
+  fail-message "Your metric is set to lower is better. More clicks is good — edit the metric and choose higher is better, or the experiment will read Personalized's extra clicks as a loss."
   exit 1
 fi
 exit 0

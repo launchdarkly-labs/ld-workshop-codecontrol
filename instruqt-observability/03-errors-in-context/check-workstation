@@ -12,7 +12,7 @@ source /opt/ld/ld.env
 APP_DIR=/opt/ld/codecontrol/app
 
 if ! grep -q 'ObservabilityPlugin(' "$APP_DIR/server.py" || ! grep -q 'new SessionReplay.default' "$APP_DIR/static/app.js"; then
-  fail-message "The observability pastes from the previous lab are missing from \`server.py\` or \`static/app.js\`. Re-apply them (or restart the previous challenge and click Skip) — without them there is nothing to attribute."
+  fail-message "The observability pastes from the previous lab are missing from 'server.py' or 'static/app.js'. Re-apply them (or restart the previous challenge and click Skip) — without them there is nothing to attribute."
   exit 1
 fi
 
@@ -20,11 +20,11 @@ STATUS=$(curl -s -o /tmp/ck-obs03.json -w '%{http_code}' -X GET \
   'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'/recommendations-strategy' \
   -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
 if [ "$STATUS" != "200" ]; then
-  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click Check again in a few seconds; if it keeps happening, tell your instructor."
   exit 1
 fi
 if [ "$(jq -r '.environments.test.fallthrough.variation // "rollout"' /tmp/ck-obs03.json)" != "1" ]; then
-  fail-message "**recommendations-strategy** is no longer serving **Personalized**, so no new errors are being produced. Leave the default rule on **Personalized** for this lab — you'll revert it in the next one."
+  fail-message "recommendations-strategy is no longer serving Personalized, so no new errors are being produced. Leave the default rule on Personalized for this lab — you'll revert it in the next one."
   exit 1
 fi
 

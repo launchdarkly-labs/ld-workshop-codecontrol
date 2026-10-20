@@ -10,13 +10,13 @@ STATUS=$(curl -s -o /tmp/ck-rel09.json -w '%{http_code}' -X GET \
   'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'/release-otto' \
   -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
 if [ "$STATUS" != "200" ]; then
-  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click Check again in a few seconds; if it keeps happening, tell your instructor."
   exit 1
 fi
 FLAG_ON=$(jq -r '.environments.test.on' /tmp/ck-rel09.json)
 
 if [ "$FLAG_ON" != "false" ]; then
-  fail-message "**release-otto** is still on. Open the flag in the LaunchDarkly tab and flip its targeting toggle to **Off** — that's the kill switch."
+  fail-message "release-otto is still on. Open the flag in the LaunchDarkly tab and flip its targeting toggle to Off — that's the kill switch."
   exit 1
 fi
 

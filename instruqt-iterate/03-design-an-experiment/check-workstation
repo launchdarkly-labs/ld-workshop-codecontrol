@@ -9,7 +9,7 @@ source /opt/ld/ld.env
 TF=/opt/ld/codecontrol/terraform
 METRIC=$(bash "$TF/lib/exp.sh" metric-key "$LD_PROJECT_KEY" recs-engagement 2>/dev/null || true)
 if [ -z "$METRIC" ]; then
-  fail-message "The **Recs engagement** metric from the previous lab is missing — an experiment needs a metric to measure. Go back and create it (event key \`recs-engagement\`), or restart that challenge and click Skip."
+  fail-message "The Recs engagement metric from the previous lab is missing — an experiment needs a metric to measure. Go back and create it (event key 'recs-engagement'), or restart that challenge and click Skip."
   exit 1
 fi
 
@@ -17,20 +17,20 @@ STATUS=$(curl -s -o /tmp/ck-itr03.json -w '%{http_code}' -X GET \
   "https://app.launchdarkly.com/api/v2/projects/$LD_PROJECT_KEY/environments/test/experiments?filter=flagKey:recommendations-strategy,metricKey:$METRIC&expand=draftIteration,currentIteration" \
   -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
 if [ "$STATUS" != "200" ]; then
-  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click Check again in a few seconds; if it keeps happening, tell your instructor."
   exit 1
 fi
 # Plain A/B experiments only — a bandit (07) also matches these filters.
 COUNT=$(jq '[.items[]? | select((.type // "experiment") == "experiment")] | length' /tmp/ck-itr03.json)
 if [ "$COUNT" == "0" ]; then
-  fail-message "No experiment on **recommendations-strategy** uses the **Recs engagement** metric yet. Create one from the **Experiments** list: flag \`recommendations-strategy\`, the default rule, randomize by user, Bestsellers as control with a 50/50 split, and Recs engagement as the metric. Save the design."
+  fail-message "No experiment on recommendations-strategy uses the Recs engagement metric yet. Create one from the Experiments list: flag 'recommendations-strategy', the default rule, randomize by user, Bestsellers as control with a 50/50 split, and Recs engagement as the metric. Save the design."
   exit 1
 fi
 # VERIFY: treatments appear under draftIteration (not yet started) or
 # currentIteration; confirm the expand fields populate them on the live API.
 TREATMENTS=$(jq '[.items[]? | select((.type // "experiment") == "experiment") | ((.currentIteration // .draftIteration // {}).treatments // []) | length] | max // 0' /tmp/ck-itr03.json)
 if [ "$TREATMENTS" != "0" ] && [ "$TREATMENTS" -lt 2 ]; then
-  fail-message "Your experiment has fewer than two variations in its split. Edit the design and make sure both **Bestsellers** and **Personalized** receive traffic (50/50)."
+  fail-message "Your experiment has fewer than two variations in its split. Edit the design and make sure both Bestsellers and Personalized receive traffic (50/50)."
   exit 1
 fi
 exit 0

@@ -288,3 +288,16 @@ Also adopted from the skill's conventions: no `id:` fields anywhere (first `inst
 **Decision:** remove the minting step from all three track setups and the matching deletion from cleanups, drop `LD_API_TOKEN` from `app/.env.example`, and update `CLAUDE.md`. Nothing consumed the token any more: it existed for the Observability track's app-side auto-remediation loop, which Phase 0 replaced with adaptive triggers (a managed feature; no runtime REST call). The environment-keys GET now captures its HTTP status and prints the body on failure, so the next failure of this kind names itself in the Instruqt log instead of appearing as a bare curl exit code.
 
 **Also set:** `skipping_enabled: true` in every `track.yml` so the operator can exercise `solve-workstation` scripts with the Skip button during verification (the console showed "Allow skipping" off).
+
+---
+
+## First full play of the Release track (2026-10-19)
+
+Played end to end on Instruqt with the baked image (every challenge: Check first to exercise the failure message, then Skip to exercise the solve). Results:
+
+- **Track setup: ~64 s**, almost all of it the participant Terraform reading its remote state (~40 s). Magic login into the sandbox project works; the storefront and code-server come up wired.
+- **Every challenge solve ran clean** (02 flag, 03 pastes + flag on, 04 context + rule, 05 segment + rule incl. the tolerated "nothing to import", 07 completed ramp, 09 kill switch) and every failure message fired with the intended text. Quizzes render as four plain radio options.
+- **Finding: `fail-message` is plain text.** Markdown bold and backticks showed literally. All 70 fail-message lines across the three tracks were rewritten without Markdown; recorded as a convention in `CLAUDE.md`.
+- **Finding: the beta release-pipeline API returned HTTP 404** (empty body) from the 08 solve, so `start-guarded-rollout.sh` took its designed fallback (Concise Otto, loud warning, exit 0). Consequence: Skip on Release 08 (and Observability 06, same helper) leaves a state the check rejects. **Decision pending with the operator**: keep the honest Skip→Check failure, relax the two checks to also accept a solve-marker, or find a working API (release policies beta, or confirm the account's release-pipelines entitlement).
+- **Cosmetics fixed:** the welcome said "three tabs" (now four, with the Shell tab described); code-server opened its AI chat panel by default (disabled via settings in `image.base.sh`; needs a re-bake to take effect).
+- **Image as baked** also carries a `ld-workshop-codecontrol/` clone beside `codecontrol/` under `/opt/ld`; harmless, but the operator may want to drop it on the next bake for a cleaner Code Editor explorer.

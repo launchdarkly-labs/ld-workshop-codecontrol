@@ -10,12 +10,12 @@ source /opt/ld/ld.env
 APP_DIR=/opt/ld/codecontrol/app
 
 if ! grep -q '.set("tier", user_tier)' "$APP_DIR/server.py"; then
-  fail-message "The server context doesn't include the visitor's tier yet. Replace the context paste block in \`server.py\` with the version from this lab."
+  fail-message "The server context doesn't include the visitor's tier yet. Replace the context paste block in 'server.py' with the version from this lab."
   exit 1
 fi
 
 if ! grep -q 'tier: userTier' "$APP_DIR/static/app.js"; then
-  fail-message "The browser context doesn't include the visitor's tier yet. Replace the client SDK paste block in \`app.js\` with the version from this lab."
+  fail-message "The browser context doesn't include the visitor's tier yet. Replace the client SDK paste block in 'app.js' with the version from this lab."
   exit 1
 fi
 
@@ -23,7 +23,7 @@ STATUS=$(curl -s -o /tmp/ck-rel04.json -w '%{http_code}' -X GET \
   'https://app.launchdarkly.com/api/v2/flags/'$LD_PROJECT_KEY'/release-otto' \
   -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
 if [ "$STATUS" != "200" ]; then
-  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click Check again in a few seconds; if it keeps happening, tell your instructor."
   exit 1
 fi
 ENV_JSON=$(jq '.environments.test' /tmp/ck-rel04.json)
@@ -32,7 +32,7 @@ RULE_OK=$(echo "$ENV_JSON" | jq '[.rules[]? | select(
     (.clauses[]? | select(.attribute == "tier" and (.values | index("beta"))))
   )] | length > 0')
 if [ "$RULE_OK" != "true" ]; then
-  fail-message "No targeting rule for beta users found on **release-otto**. Add a rule: if \`tier\` is one of \`beta\`, serve \`true\`."
+  fail-message "No targeting rule for beta users found on release-otto. Add a rule: if 'tier' is one of 'beta', serve 'true'."
   exit 1
 fi
 
@@ -40,24 +40,24 @@ RULE_SERVES_TRUE=$(echo "$ENV_JSON" | jq '[.rules[]? | select(
     (.clauses[]? | select(.attribute == "tier" and (.values | index("beta"))))
   ) | select(.variation == 0)] | length > 0')
 if [ "$RULE_SERVES_TRUE" != "true" ]; then
-  fail-message "Your beta rule exists but doesn't serve \`true\`. Edit the rule so it serves the \`true\` variation."
+  fail-message "Your beta rule exists but doesn't serve 'true'. Edit the rule so it serves the 'true' variation."
   exit 1
 fi
 
 if [ "$(echo "$ENV_JSON" | jq '.fallthrough | has("rollout")')" == "true" ]; then
-  fail-message "The default rule is set to a percentage rollout. For this lab it should serve the single variation \`false\` — edit the default rule and pick \`false\`."
+  fail-message "The default rule is set to a percentage rollout. For this lab it should serve the single variation 'false' — edit the default rule and pick 'false'."
   exit 1
 fi
 
 FALLTHROUGH=$(echo "$ENV_JSON" | jq -r '.fallthrough.variation')
 if [ "$FALLTHROUGH" != "1" ]; then
-  fail-message "The default rule still serves \`true\`, so everyone gets Otto regardless of your targeting. Change the default rule to serve \`false\`."
+  fail-message "The default rule still serves 'true', so everyone gets Otto regardless of your targeting. Change the default rule to serve 'false'."
   exit 1
 fi
 
 FLAG_ON=$(echo "$ENV_JSON" | jq -r '.on')
 if [ "$FLAG_ON" != "true" ]; then
-  fail-message "The targeting looks right but **release-otto** is toggled off. Turn it on so the rule takes effect."
+  fail-message "The targeting looks right but release-otto is toggled off. Turn it on so the rule takes effect."
   exit 1
 fi
 

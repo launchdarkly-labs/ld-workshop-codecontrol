@@ -13,19 +13,19 @@ STATUS=$(curl -s -o /tmp/ck-obs07.json -w '%{http_code}' -X GET \
   'https://app.launchdarkly.com/api/v2/projects/'$LD_PROJECT_KEY'/environments/test/adaptive-triggers?resourceKind=flag&resourceKey=recommendations-strategy' \
   -H 'Authorization: '$LAUNCHDARKLY_ACCESS_TOKEN)
 if [ "$STATUS" != "200" ]; then
-  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click **Check** again in a few seconds; if it keeps happening, tell your instructor."
+  fail-message "Couldn't reach the LaunchDarkly API (HTTP $STATUS). Click Check again in a few seconds; if it keeps happening, tell your instructor."
   exit 1
 fi
 
 COUNT=$(jq '[.items[]?] | length' /tmp/ck-obs07.json)
 if [ "$COUNT" == "0" ]; then
-  fail-message "No adaptive trigger found on **recommendations-strategy**. On the flag's Targeting tab, click **Add adaptive trigger** under the default rule, choose **User HTTP error rate** as the source, set a threshold, pick **Bestsellers** under **Switch variation to**, and click **Add**."
+  fail-message "No adaptive trigger found on recommendations-strategy. On the flag's Targeting tab, click Add adaptive trigger under the default rule, choose User HTTP error rate as the source, set a threshold, pick Bestsellers under Switch variation to, and click Add."
   exit 1
 fi
 
 ENABLED=$(jq '[.items[]? | select(.enabled == true)] | length' /tmp/ck-obs07.json)
 if [ "$ENABLED" == "0" ]; then
-  fail-message "An adaptive trigger exists on **recommendations-strategy** but it's disabled. Enable it (pencil icon next to the trigger on the Targeting tab) so it can fire."
+  fail-message "An adaptive trigger exists on recommendations-strategy but it's disabled. Enable it (pencil icon next to the trigger on the Targeting tab) so it can fire."
   exit 1
 fi
 

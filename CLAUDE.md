@@ -204,7 +204,7 @@ Setup scripts run as root on the workstation. Typical pattern: clone or pull a p
 
 ### Check scripts
 
-Check scripts validate the learner's work by hitting the LaunchDarkly REST API with `curl` and `jq`, using `fail-message "..."` to give specific guidance, then `exit 1` on failure and `exit 0` on success. **Verify the current endpoint shape in the LaunchDarkly API docs before writing checks. Do not invent endpoints.** Reference the public 01-release track's `check-workstation` files for the idiom.
+Check scripts validate the learner's work by hitting the LaunchDarkly REST API with `curl` and `jq`, using `fail-message "..."` to give specific guidance, then `exit 1` on failure and `exit 0` on success. **`fail-message` text is rendered as plain text, not Markdown** (verified in a live play 2026-10-19): no `**bold**`, no backticks — write flag keys and labels bare or in single quotes. **Verify the current endpoint shape in the LaunchDarkly API docs before writing checks. Do not invent endpoints.** Reference the public 01-release track's `check-workstation` files for the idiom.
 
 ### Solve scripts
 
