@@ -277,7 +277,7 @@ Operator answers to the open questions in `PHASES-observability.md` §9, recorde
 
 Also adopted from the skill's conventions: no `id:` fields anywhere (first `instruqt track push` assigns them), `idle_timeout: 1200` and `sidebar_enabled: true` in `track.yml`, a fourth **Shell** terminal tab on every challenge, a `cleanup-workstation` (`exit 0`) per substantive challenge, and the image split into `image.base.sh` (skill contract: tools via the HashiCorp apt repo, participant clone + `terraform init`, code-server rooted at `/opt/ld`) plus `app-install.sh` (this workshop's app), assembled into `image.sh` by `build-image.sh`. The one deliberate deviation from the skill's image template: the app is placed from git (or a copied checkout) rather than embedded as heredocs, because it vendors ~1 MB of browser bundles that can't sensibly be pasted into a console.
 
-**Kept from this repo's own design, on top of the contract:** the scoped `LD_API_TOKEN` minted per lab (the skill has no equivalent), the three-tab ToggleWear/Code Editor layout (now four with Shell), the per-challenge Terraform solve modules, the baseline-replay pattern for later tracks, and the `/opt/ld/codecontrol` + `/opt/ld/venv` layout (code-server's workspace root moved from the app directory to `/opt/ld` per the contract, so learners open `codecontrol/app/server.py` in the explorer).
+**Kept from this repo's own design, on top of the contract:** the scoped `LD_API_TOKEN` minted per lab (the skill has no equivalent), the three-tab ToggleWear/Code Editor layout (now four with Shell), the per-challenge Terraform solve modules, the baseline-replay pattern for later tracks, and the `/opt/ld/codecontrol` + `/opt/ld/venv` layout.
 
 ---
 
@@ -374,3 +374,11 @@ The three tracks are now verified end to end on the production image. Remaining 
 **Decision (operator):** every place the app evaluates flags must also subscribe to flag changes and react, in both SDKs. Before this, the browser's `change` handler only re-applied Otto's visibility (a change to `show-recommendations` or `recommendations-strategy` wasn't rendered until the shopper clicked something), and the Python side registered no listener at all.
 
 **Now:** the browser's `refresh()` is the single "re-evaluate and re-render everything flag-driven" routine — Otto visibility plus a carousel reload — and runs on `ready`, on every `change`, and after `identify()`. The server subscribes with `ld_client.flag_tracker.add_listener(...)` and logs each change as it lands (per-request `variation()` calls were already current because the SDK streams; the subscription makes that visible). Release 03's check enforces both: the paste must contain `ldClient.on('change'` and `flag_tracker.add_listener`. Applied to the Release 03/04 and Observability 02 pastes and their assignment code blocks.
+
+---
+
+## Code Editor workspace is the app directory, not `/opt/ld` (2026-10-21)
+
+**Decision (operator):** code-server's workspace root is `/opt/ld/codecontrol/app`. This deliberately overrides the `launchdarkly-instruqt-track` skill's base, which roots code-server at `/opt/ld`.
+
+**Rationale:** a learner opening the Code Editor tab should see `server.py` and `static/` and nothing else. At `/opt/ld` the explorer showed the Terraform modules, the three track directories, the participant Terraform, the venv, and the plugin cache — scaffolding that has nothing to do with the two files the labs ask them to edit. The Shell tab already opens in the app directory, so the two tabs now agree. Changed in `vm-image/image.base.sh` (the installed unit), `verify-image.sh`, and the welcome prose; the operator applied the same change on the live image.

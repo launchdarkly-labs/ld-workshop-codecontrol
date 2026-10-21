@@ -33,7 +33,10 @@ git clone https://github.com/launchdarkly-labs/ld-workshop-participant.git
 cd /opt/ld/ld-workshop-participant
 terraform init
 
-# ---- REQUIRED: code-server (the "Code Editor" tab, port 8080, rooted at /opt/ld)
+# ---- REQUIRED: code-server (the "Code Editor" tab, port 8080). Workspace root
+#      deviates from the skill template (/opt/ld): learners open the app only,
+#      /opt/ld/codecontrol/app, so the scaffolding doesn't distract them. The
+#      Shell tab lands in the same directory. Recorded in DECISIONS.md.
 mkdir -p /root/.local/share/code-server/User
 
 cat > /root/.local/share/code-server/User/settings.json <<-SETTINGS
@@ -60,7 +63,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=root
-ExecStart=/usr/bin/code-server --host 0.0.0.0 --port 8080 --auth none /opt/ld
+ExecStart=/usr/bin/code-server --host 0.0.0.0 --port 8080 --auth none /opt/ld/codecontrol/app
 
 [Install]
 WantedBy=multi-user.target

@@ -47,7 +47,7 @@ check "togglewear-traffic installed, NOT enabled" "systemctl cat togglewear-traf
 check "storefront answers on :3000"       "curl -fsS localhost:3000/healthz | jq -e '.ok == true'"
 check "storefront is UNWIRED (fresh image)" "curl -fsS localhost:3000/healthz | jq -e '.ld_wired == false'"
 check "code-server answers on :8080"      "curl -fsS -o /dev/null localhost:8080"
-check "code-server rooted at /opt/ld"       "systemctl cat code-server | grep -q ' /opt/ld$'"
+check "code-server rooted at the app dir"   "systemctl cat code-server | grep -q ' /opt/ld/codecontrol/app$'"
 check "/opt/ld/traffic.env exists"        "test -f /opt/ld/traffic.env"
 
 echo

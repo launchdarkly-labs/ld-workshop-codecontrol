@@ -59,8 +59,11 @@ script, assignment, paste file, or Terraform module changes. The
 - `/opt/ld/ld-workshop-participant`: clone of
   `launchdarkly-labs/ld-workshop-participant`, `terraform init` already run.
   Track setup applies it per sandbox; track cleanup destroys it.
-- code-server on :8080, `--auth none`, as root, rooted at `/opt/ld` (so the
-  Code Editor tab shows both `codecontrol/` and `ld-workshop-participant/`).
+- code-server on :8080, `--auth none`, as root, with the workspace rooted at
+  `/opt/ld/codecontrol/app` — the one deliberate deviation from the skill's
+  base (which uses `/opt/ld`), so learners see only the app they edit, not the
+  Terraform, tracks, and participant scaffolding. The Shell tab opens in the
+  same directory.
 
 ### This workshop (`app-install.sh`)
 

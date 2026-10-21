@@ -138,7 +138,7 @@ This repo follows the `launchdarkly-instruqt-track` skill (`~/.claude/skills/lau
 2. `config.yml` secrets: `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `LAUNCHDARKLY_ACCESS_TOKEN`. The AWS ones are consumed only by the participant Terraform (login-handler remote state + DynamoDB).
 3. `track_scripts/setup-workstation` runs `terraform apply -auto-approve` in `/opt/ld/ld-workshop-participant` after writing `terraform.tfvars` with `sandbox_id`, and reads the project key from `terraform output -json | jq -r '.students.value[0].project_key'`.
 4. `track_scripts/cleanup-workstation` runs `terraform destroy -auto-approve` there.
-5. `vm-image/image.sh` clones `ld-workshop-participant` to `/opt/ld`, runs `terraform init` there, installs code-server on 8080 rooted at `/opt/ld`, and ensures `python3`.
+5. `vm-image/image.sh` clones `ld-workshop-participant` to `/opt/ld`, runs `terraform init` there, installs code-server on 8080, and ensures `python3`. **One recorded deviation:** code-server's workspace is `/opt/ld/codecontrol/app`, not `/opt/ld` (operator decision 2026-10-21, see `DECISIONS.md`) so learners see only the app.
 
 Plus the skill's conventions: lifecycle scripts run via the Instruqt agent and **do not inherit `~/.profile`**, so track setup writes `/opt/ld/ld.env` (`LD_PROJECT_KEY`, `LD_ENV_KEY`, `LD_CLIENT_KEY`, `LD_SDK_KEY`) and every challenge script does `source /opt/ld/ld.env`; setup also publishes `agent variable set LD_PROJECT_KEY …` for `[[ Instruqt-Var key="LD_PROJECT_KEY" hostname="workstation" ]]` in assignments; `LAUNCHDARKLY_ACCESS_TOKEN` is never written to disk.
 
