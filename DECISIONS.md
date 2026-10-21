@@ -346,9 +346,11 @@ Deleted: `terraform/lib/start-guarded-rollout.sh`, `terraform/release-08/start-g
 
 | Track | Slug | Title |
 |---|---|---|
-| 1 | `ld-codecontrol-release` | Shipping Otto: From First Flag to Guarded Release |
-| 2 | `ld-codecontrol-observability` | The Carousel That Broke Production |
-| 3 | `ld-codecontrol-iterate` | Bestsellers vs. Personalized: Let the Shop Decide |
+| 1 | `ld-codecontrol-release` | CodeControl 1: Shipping Otto: From First Flag to Guarded Release |
+| 2 | `ld-codecontrol-observability` | CodeControl 2: The Carousel That Broke Production |
+| 3 | `ld-codecontrol-iterate` | CodeControl 3: Bestsellers vs. Personalized: Let the Shop Decide |
+
+**Refinement (operator, same day):** titles carry a `CodeControl N:` prefix so the catalog shows the series and the order.
 
 **Rationale:** the titles name what happens to ToggleWear, which is more inviting in a catalog than the product pillar, and each is a promise the labs keep. Trade-off accepted: Track 2's title alone doesn't say "LaunchDarkly" or "observability"; the teaser and the series tag carry that.
 
