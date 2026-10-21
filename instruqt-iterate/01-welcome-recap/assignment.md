@@ -68,6 +68,6 @@ All code is copy-paste: one `track()` call. The rest happens in LaunchDarkly.
 1. [ToggleWear](#tab-1): scroll to **Recommended for You**, click a product card, and notice the carousel doesn't change. That's Bestsellers ignoring what you viewed. Now click an item *in the carousel*: it gets a green outline. That click is the behavior we're about to measure.
 2. [LaunchDarkly](#tab-0): open **recommendations-strategy** and look at its two variations. Then find **Experiments** in the left sidebar. Empty, for now.
    <!-- VERIFY: sidebar placement of Experiments and Multi-armed bandits; Metrics under a "Data" section per current docs -->
-3. [Code Editor](#tab-2): in `server.py`, find the `/recommendations/click` endpoint. It receives every carousel click and, right now, does nothing with it. That's where the metric event will go.
+3. [Code Editor](#tab-2): the editor opens on the shop's source, nothing else. In `server.py`, find the `/recommendations/click` endpoint. It receives every carousel click and, right now, does nothing with it. That's where the metric event will go.
 
 Click **Check**, then **Next**.

@@ -68,6 +68,6 @@ Everything you paste is copy-paste. The point is seeing how observability wires 
 1. [ToggleWear](#tab-1): scroll down to **Recommended for You**. Click a product card; the carousel doesn't change yet, because Bestsellers ignores what you viewed. Remember the **Rollout Tote**. It matters later.
 2. [LaunchDarkly](#tab-0): open the **Flags** list. Four flags: two from the Release track, two for the carousel. Open **recommendations-strategy** and note its two variations and the default rule serving **Bestsellers**. Then find **Telemetry** in the left sidebar; its **Errors**, **Sessions**, and **Alerts** pages are empty right now. They won't stay that way.
    <!-- VERIFY: sidebar section name ("Telemetry") and which pages appear under it before any observability data exists -->
-3. [Code Editor](#tab-2): open `server.py` and find `_recommend_personalized`. Spot the line that reads `viewed["category"]` with no guard. Don't fix it. That's the bug, and it's the whole plot.
+3. [Code Editor](#tab-2): the editor opens on the shop's source, nothing else. Open `server.py` and find `_recommend_personalized`. Spot the line that reads `viewed["category"]` with no guard. Don't fix it. That's the bug, and it's the whole plot.
 
 Click **Check**, then **Next**.
