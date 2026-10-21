@@ -61,6 +61,13 @@ Open the [Code Editor](#tab-2) tab and open `server.py`.
 
    ldclient.set_config(Config(os.environ["LD_SDK_KEY"]))
    ld_client = ldclient.get()
+
+   # The SDK streams flag changes and every variation() call reads the latest
+   # value, so evaluations are always current. Subscribing to the change feed
+   # as well makes each change visible in the server log the moment it lands.
+   ld_client.flag_tracker.add_listener(
+       lambda change: log.info("flag changed: %s", change.key)
+   )
    # ─── End LaunchDarkly SDK setup paste block ───────────────────────────────
    ```
 
@@ -101,6 +108,7 @@ Still in the [Code Editor](#tab-2), open `static/app.js`.
    // ─────────────────────────────────────────────────────────────────────────
    let ottoEnabled = false;
    let ldClient = null;
+   let refresh = () => {};
 
    async function initLaunchDarkly() {
      const cfg = await (await fetch('/config')).json();
@@ -108,9 +116,13 @@ Still in the [Code Editor](#tab-2), open `static/app.js`.
        kind: 'user',
        key: getSessionId(),
      });
-     const refresh = () => {
+     // Runs once flags are ready and again on EVERY flag change LaunchDarkly
+     // streams down: re-evaluate and re-render everything flag-driven, so a
+     // toggle in LaunchDarkly shows up here within seconds, no refresh.
+     refresh = () => {
        ottoEnabled = ldClient.boolVariation('release-otto', false);
        applyOttoVisibility();
+       loadRecommendations();
      };
      ldClient.on('ready', refresh);
      ldClient.on('change', refresh);
@@ -125,7 +137,7 @@ Still in the [Code Editor](#tab-2), open `static/app.js`.
 
 2. Save the file.
 
-Note the `change` listener: when the flag changes in LaunchDarkly, every open browser finds out in seconds. No refresh, no redeploy. You're about to see that live.
+Note the `change` listener: when any flag changes in LaunchDarkly, every open browser finds out in seconds and `refresh()` re-renders everything the flags drive. No refresh, no redeploy. You're about to see that live. The server has the same idea: the SDK streams changes continuously, and the `flag_tracker` listener you pasted logs each one as it lands.
 
 # Turn Otto on
 

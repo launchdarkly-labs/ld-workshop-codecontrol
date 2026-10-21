@@ -16,4 +16,7 @@ ldclient.set_config(Config(
     ],
 ))
 ld_client = ldclient.get()
+ld_client.flag_tracker.add_listener(
+    lambda change: log.info("flag changed: %s", change.key)
+)
 # ─── End LaunchDarkly SDK setup paste block ───────────────────────────────

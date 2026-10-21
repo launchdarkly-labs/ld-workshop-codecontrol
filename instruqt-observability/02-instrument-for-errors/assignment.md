@@ -73,6 +73,9 @@ Open the [Code Editor](#tab-2) tab and open `server.py`.
        ],
    ))
    ld_client = ldclient.get()
+   ld_client.flag_tracker.add_listener(
+       lambda change: log.info("flag changed: %s", change.key)
+   )
    # ─── End LaunchDarkly SDK setup paste block ───────────────────────────────
    ```
 
@@ -92,6 +95,7 @@ Still in the [Code Editor](#tab-2), open `static/app.js`.
    // ─────────────────────────────────────────────────────────────────────────
    let ottoEnabled = false;
    let ldClient = null;
+   let refresh = () => {};
 
    function ldContext() {
      return {
@@ -116,12 +120,15 @@ Still in the [Code Editor](#tab-2), open `static/app.js`.
          }),
        ],
      });
-     const refresh = () => {
+     // Runs once flags are ready and again on EVERY flag change LaunchDarkly
+     // streams down: re-evaluate and re-render everything flag-driven.
+     refresh = () => {
        ottoEnabled = ldClient.boolVariation('release-otto', false);
        applyOttoVisibility();
        // Evaluate the strategy flag in the browser too: LaunchDarkly attributes
        // this session's errors and replay to the variation it evaluated.
        ldClient.variation('recommendations-strategy', 'bestsellers');
+       loadRecommendations();
      };
      ldClient.on('ready', refresh);
      ldClient.on('change', refresh);

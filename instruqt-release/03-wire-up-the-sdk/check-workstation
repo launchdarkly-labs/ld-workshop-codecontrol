@@ -24,8 +24,18 @@ if ! grep -q 'ld_client.variation("release-otto"' "$APP_DIR/server.py"; then
   exit 1
 fi
 
+if ! grep -q 'flag_tracker.add_listener' "$APP_DIR/server.py"; then
+  fail-message "The server SDK is configured but isn't subscribed to flag changes. Paste this lab's full SDK setup block into server.py — it ends with ld_client.flag_tracker.add_listener(...)."
+  exit 1
+fi
+
 if ! grep -q 'LDClient.createClient' "$APP_DIR/static/app.js"; then
   fail-message "The client SDK isn't wired up yet. Paste the client SDK block into the marked stub in 'app.js'."
+  exit 1
+fi
+
+if ! grep -q "ldClient.on('change'" "$APP_DIR/static/app.js"; then
+  fail-message "The browser creates a LaunchDarkly client but never listens for flag changes. Paste this lab's full client SDK block into app.js — it registers ldClient.on('change', refresh) so the page updates without a reload."
   exit 1
 fi
 

@@ -3,6 +3,7 @@
 // ─────────────────────────────────────────────────────────────────────────
 let ottoEnabled = false;
 let ldClient = null;
+let refresh = () => {};
 
 function ldContext() {
   return {
@@ -27,12 +28,15 @@ async function initLaunchDarkly() {
       }),
     ],
   });
-  const refresh = () => {
+  // Runs once flags are ready and again on EVERY flag change LaunchDarkly
+  // streams down: re-evaluate and re-render everything flag-driven.
+  refresh = () => {
     ottoEnabled = ldClient.boolVariation('release-otto', false);
     applyOttoVisibility();
     // Evaluate the strategy flag in the browser too: LaunchDarkly attributes
     // this session's errors and replay to the variation it evaluated.
     ldClient.variation('recommendations-strategy', 'bestsellers');
+    loadRecommendations();
   };
   ldClient.on('ready', refresh);
   ldClient.on('change', refresh);
@@ -41,11 +45,7 @@ async function initLaunchDarkly() {
 
 function onTierChanged() {
   if (ldClient) {
-    ldClient.identify(ldContext()).then(() => {
-      ottoEnabled = ldClient.boolVariation('release-otto', false);
-      applyOttoVisibility();
-      ldClient.variation('recommendations-strategy', 'bestsellers');
-    });
+    ldClient.identify(ldContext()).then(refresh);
   }
 }
 // ─── End LaunchDarkly client SDK paste block ──────────────────────────────
