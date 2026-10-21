@@ -19,6 +19,7 @@ repo (see "Things Claude Code does not own" in `CLAUDE.md`).
 | `systemd/togglewear.service` | The storefront on :3000 (enabled at boot). |
 | `systemd/togglewear-traffic.service` | Synthetic shopper traffic (installed, disabled; labs start it). |
 | `verify-image.sh` | Post-bake checks; run before saving the image. |
+| `update-source.sh` | Refresh `/opt/ld/codecontrol` on an existing image VM (no venv rebuild) when only repo content changed; then Save a new image version. `git pull` doesn't apply: the installer strips `.git` so no history or remote config ships to learners. |
 
 Sizing note: `machine_type: n1-standard-1` is declared in `config.yml` — the
 app is a single FastAPI process with no LLM, so this should suffice; confirm
